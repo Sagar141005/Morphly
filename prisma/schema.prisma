@@ -13,6 +13,7 @@ model User {
   email       String   @unique
   name        String?
   profilePic  String?
+  hashedPassword String?
   plan        Plan     @default(FREE)
   stripeId    String?  
   files       File[]
