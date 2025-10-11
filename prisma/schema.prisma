@@ -19,6 +19,7 @@ model User {
   files       File[]
   conversions Conversion[]
   createdAt   DateTime @default(now())
+  emailVerified         DateTime?
 
   stripeCustomerId      String? 
   stripeSubscriptionId  String?
