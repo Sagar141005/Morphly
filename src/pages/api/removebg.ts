@@ -1,9 +1,8 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import type { NextApiRequest, NextApiResponse } from "next";
-import formidable, { File as FormidableFile } from "formidable";
-import fs from "fs";
-import { promisify } from "util";
+import formidable from "formidable";
+import cloudinary from "@/lib/cloudinary";
 import { prisma } from "@/lib/prisma";
 
 export const config = {
@@ -11,8 +10,6 @@ export const config = {
     bodyParser: false,
   },
 };
-
-const readFile = promisify(fs.readFile);
 
 export default async function handler(
   req: NextApiRequest,
@@ -50,15 +47,20 @@ export default async function handler(
       return res.status(400).json({ error: "No file uploaded." });
     }
 
-    const fileBuffer = await readFile(file.filepath);
+    try {
+      const result = await cloudinary.uploader.upload(file.filepath, {
+        folder: "bg-removed",
+        transformation: [{ effect: "background_removal" }],
+      });
 
-    //BG Remove logic
-
-    return res.status(200).json({
-      message: "File received and user is Pro. Ready for background removal.",
-      filename: file.originalFilename,
-      size: file.size,
-      type: file.mimetype,
-    });
+      return res.status(200).json({
+        message: "Background removed successfully.",
+        url: result.secure_url,
+        public_id: result.public_id,
+      });
+    } catch (error) {
+      console.error("Cloudinary upload failed:", error);
+      return res.status(500).json({ error: "Failed to remove background." });
+    }
   });
 }

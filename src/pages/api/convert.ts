@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import formidable, { File as FormidableFile } from "formidable";
+import formidable from "formidable";
 import fs from "fs";
 import { promisify } from "util";
 import { getServerSession } from "next-auth";
@@ -23,6 +23,7 @@ export default async function handler(
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
+
   const session = await getServerSession(req, res, authOptions);
   if (!session?.user.email) {
     return res.status(401).json({ error: "Unauthorized" });
