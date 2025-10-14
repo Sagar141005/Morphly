@@ -83,7 +83,7 @@ export default async function handler(
     );
     return res.send(convertedBuffer);
   } else {
-    const fileUrl = await uploadToSupabase(
+    const fileURL = await uploadToSupabase(
       convertedBuffer,
       `converted.${format}`
     );
@@ -93,12 +93,12 @@ export default async function handler(
         name: file.originalFilename ?? `converted.${format}`,
         type: file.mimetype || "image/unknown",
         size: file.size,
-        url: fileUrl,
+        url: fileURL,
         userId: user.id,
         status: "PROCESSED",
       },
     });
 
-    return res.status(200).json({ url: fileUrl });
+    return res.status(200).json({ url: fileURL });
   }
 }

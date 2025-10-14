@@ -39,6 +39,7 @@ model File {
   status      FileStatus @default(PROCESSED)
   user        User     @relation(fields: [userId], references: [id])
   userId      String
+  backgroundRemoved Boolean @default(false)
   createdAt   DateTime @default(now())
 
   Compression Compression[]
