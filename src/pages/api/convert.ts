@@ -85,7 +85,8 @@ export default async function handler(
   } else {
     const fileURL = await uploadToSupabase(
       convertedBuffer,
-      `converted.${format}`
+      `converted.${format}`,
+      "converted"
     );
 
     await prisma.file.create({

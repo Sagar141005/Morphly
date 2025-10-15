@@ -67,8 +67,8 @@ export default async function handler(
     const imageBuffer: Buffer = imageResponse.data;
 
     const extension = cloudinaryResult.format || "png";
-    const fileName = `${file.originalFilename}${Date.now()}.${extension}`;
-    const fileURL = await uploadToSupabase(imageBuffer, fileName);
+    const fileName = `${Date.now()}-${file.originalFilename}.${extension}`;
+    const fileURL = await uploadToSupabase(imageBuffer, fileName, "bg-removed");
 
     await prisma.file.create({
       data: {

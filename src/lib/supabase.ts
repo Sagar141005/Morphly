@@ -7,9 +7,10 @@ const supabase = createClient(
 
 export async function uploadToSupabase(
   buffer: Buffer,
-  fileName: string
+  fileName: string,
+  folder: "converted" | "bg-removed" = "converted"
 ): Promise<string> {
-  const path = `converted/${Date.now()}-${fileName}`;
+  const path = `${folder}/${Date.now()}-${fileName}`;
   const { data, error } = await supabase.storage
     .from("converted")
     .upload(path, buffer, {
