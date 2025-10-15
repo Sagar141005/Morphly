@@ -1,8 +1,17 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { FileIcon, FileText, FileImage, X } from "lucide-react";
+import type { UploadFile } from "@/types/type";
+
+interface DragAndDropUploaderProps {
+  showFormatSelect?: boolean;
+  onSubmit: (files: UploadFile[]) => Promise<void>;
+  acceptedTypes?: { [mime: string]: string[] };
+  getFormatsForFile?: (type: string, name: string) => string[];
+  buttonLabel?: string;
+}
 
 const getIconForFile = (type: string) => {
   if (type.startsWith("image/")) return <FileImage className="text-blue-500" />;
@@ -11,49 +20,35 @@ const getIconForFile = (type: string) => {
   return <FileIcon className="text-gray-500" />;
 };
 
-const getAvailableFormats = (type: string, name: string) => {
-  const lowerName = name.toLocaleLowerCase();
-
-  if (
-    type === "application/pdf" ||
-    lowerName.endsWith(".pdf" || ".docx" || ".txt")
-  )
-    return ["PDF", "DOCX", "TXT"];
-
-  if (type.startsWith("image/") || /\.(png|jpg|jpeg|webp|gif)$/.test(lowerName))
-    return ["JPG", "PNG", "WEBP"];
-
-  if (type.startsWith("text/") || /\.(txt|csv|md|json)$/.test(lowerName))
-    return ["PDF", "TXT"];
-
-  return ["PDF", "TXT"];
-};
-
-interface UploadFile {
-  file: File;
-  format: string;
-}
-
-export default function FileUpload() {
+export default function DragAndDropUploader({
+  showFormatSelect = false,
+  onSubmit,
+  acceptedTypes = {
+    "application/pdf": [],
+    "image/*": [],
+    "text/*": [],
+  },
+  getFormatsForFile = () => [],
+  buttonLabel = "Submit Files",
+}: DragAndDropUploaderProps) {
   const [files, setFiles] = useState<UploadFile[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    const newFiles: UploadFile[] = acceptedFiles.map((file) => ({
-      file,
-      format: getAvailableFormats(file.type, file.name)[0],
-    }));
-    setFiles((prev) => [...prev, ...newFiles]);
-  }, []);
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      const newFiles: UploadFile[] = acceptedFiles.map((file) => ({
+        file,
+        format: getFormatsForFile(file.type, file.name)[0] ?? "",
+      }));
+      setFiles((prev) => [...prev, ...newFiles]);
+    },
+    [getFormatsForFile]
+  );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     multiple: true,
-    accept: {
-      "application/pdf": [],
-      "image/*": [],
-      "text/*": [],
-    },
+    accept: acceptedTypes,
   });
 
   const handleFormatChange = (index: number, newFormat: string) => {
@@ -64,50 +59,14 @@ export default function FileUpload() {
 
   const removeFile = (index: number) => {
     const updated = [...files];
-    updated.slice(index, 1);
+    updated.splice(index, 1);
     setFiles(updated);
   };
 
-  const handleConvert = async () => {
+  const handleSubmit = async () => {
     setLoading(true);
     try {
-      for (const item of files) {
-        const formData = new FormData();
-        formData.append("file", item.file);
-        formData.append("format", item.format);
-
-        try {
-          const res = await fetch("/api/convert", {
-            method: "POST",
-            body: formData,
-          });
-
-          if (!res.ok) {
-            const errorData = await res.json();
-            alert(`Error: ${errorData.error}`);
-            continue;
-          }
-
-          const contentDisposition = res.headers.get("Content-Disposition");
-
-          if (contentDisposition?.includes("attachment")) {
-            const blob = await res.blob();
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement("a");
-            link.href = url;
-            link.download = `converted.${item.format.toLowerCase()}`;
-            document.body.appendChild(link);
-            link.click();
-            link.remove();
-          } else {
-            const data = await res.json();
-            window.open(data.url, "_blank");
-          }
-        } catch (err) {
-          console.error("Conversion failed:", err);
-          alert("Something went wrong.");
-        }
-      }
+      await onSubmit(files);
     } finally {
       setLoading(false);
     }
@@ -150,19 +109,23 @@ export default function FileUpload() {
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <select
-                    value={item.format}
-                    onChange={(e) => handleFormatChange(index, e.target.value)}
-                    className="border px-2 py-1 rounded text-sm"
-                  >
-                    {getAvailableFormats(item.file.type, item.file.name).map(
-                      (format) => (
-                        <option key={format} value={format}>
-                          {format}
-                        </option>
-                      )
-                    )}
-                  </select>
+                  {showFormatSelect && (
+                    <select
+                      value={item.format}
+                      onChange={(e) =>
+                        handleFormatChange(index, e.target.value)
+                      }
+                      className="border px-2 py-1 rounded text-sm"
+                    >
+                      {getFormatsForFile(item.file.type, item.file.name).map(
+                        (format) => (
+                          <option key={format} value={format}>
+                            {format}
+                          </option>
+                        )
+                      )}
+                    </select>
+                  )}
                   <button
                     onClick={() => removeFile(index)}
                     className="text-red-500 hover:text-red-700"
@@ -176,11 +139,11 @@ export default function FileUpload() {
 
           <div className="pt-4">
             <button
-              onClick={handleConvert}
+              onClick={handleSubmit}
               disabled={loading}
               className="w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
             >
-              {loading ? "Converting..." : "Convert Files"}
+              {loading ? "Processing..." : buttonLabel}
             </button>
           </div>
         </>
