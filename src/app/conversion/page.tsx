@@ -1,3 +1,5 @@
+"use client";
+
 import DragAndDropUploader from "@/components/DragAndDropUploader";
 import type { UploadFile } from "@/types/type";
 
