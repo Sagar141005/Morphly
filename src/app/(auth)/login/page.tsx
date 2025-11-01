@@ -1,31 +1,67 @@
-import { GalleryVerticalEnd } from "lucide-react";
-import { LoginForm } from "@/components/auth/LoginForm";
+"use client";
+
 import Link from "next/link";
+import { LoginForm } from "@/components/auth/LoginForm";
+import { motion } from "framer-motion";
 
 export default function LoginPage() {
   return (
-    <div className="grid min-h-svh lg:grid-cols-2">
-      <div className="flex flex-col gap-4 p-6 md:p-10">
-        <div className="flex justify-center gap-2 md:justify-start">
-          <Link href="/" className="flex items-center gap-2 font-medium">
-            <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
-              <GalleryVerticalEnd className="size-4" />
-            </div>
-            Morphly
-          </Link>
-        </div>
-        <div className="flex flex-1 items-center justify-center">
-          <div className="w-full max-w-sm">
-            <LoginForm />
+    <div className="min-h-screen bg-gradient-to-b from-white to-blue-50/30 flex flex-col lg:flex-row">
+      <div className="flex flex-col justify-center items-center w-full lg:w-1/2 px-6 sm:px-10 py-16 relative">
+        <Link
+          href="/"
+          className="flex items-center text-2xl mb-8 font-extrabold text-blue-600 tracking-tight hover:scale-[1.02] hover:brightness-110 transition-all"
+        >
+          <img src="/M.png" alt="Morphly Logo" className="h-7 w-7 mb-0.5" />
+          orphly
+        </Link>
+
+        <motion.div
+          initial={{ opacity: 0, y: 25 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="w-full max-w-md relative z-10 bg-white/70 backdrop-blur-xl rounded-2xl shadow-md p-10 border border-white/40"
+        >
+          <div className="text-center mb-8">
+            <h1 className="text-4xl font-extrabold text-gray-900 mb-2">
+              Welcome Back
+            </h1>
+            <p className="text-gray-600 text-base">
+              Sign in to access your Morphly workspace.
+            </p>
           </div>
-        </div>
+
+          <LoginForm />
+
+          <p className="mt-8 text-sm text-gray-600 text-center">
+            Don’t have an account?{" "}
+            <Link
+              href="/signup"
+              className="font-semibold text-blue-600 hover:text-blue-700 transition-colors"
+            >
+              Sign up for free
+            </Link>
+          </p>
+        </motion.div>
+
+        <p className="text-xs text-gray-400 mt-12 relative z-10">
+          © {new Date().getFullYear()} Morphly. All rights reserved.
+        </p>
       </div>
-      <div className="bg-muted relative hidden lg:block">
+
+      <div className="hidden lg:flex relative w-1/2 items-center justify-center overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/70 via-blue-500/60 to-blue-400/40 mix-blend-multiply z-10" />
         <img
-          src="https://images.unsplash.com/photo-1718202248232-0cdbc15d29b2?q=80&w=1064&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-          alt="Image"
-          className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+          src="https://images.unsplash.com/photo-1718202248232-0cdbc15d29b2?q=80&w=1600&auto=format&fit=crop"
+          alt="Abstract Morphly Visual"
+          className="absolute inset-0 h-full w-full object-cover"
         />
+        <div className="relative z-20 text-center text-white px-10 max-w-md">
+          <h2 className="text-4xl font-extrabold mb-3">Smarter Conversions</h2>
+          <p className="text-blue-50 text-lg leading-relaxed">
+            Transform, compress, and enhance your files — with speed and style.
+          </p>
+        </div>
       </div>
     </div>
   );
