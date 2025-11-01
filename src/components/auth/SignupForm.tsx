@@ -9,18 +9,9 @@ import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import Link from "next/link";
-
 const signupSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters long"),
-  email: z.string().email(),
+  email: z.string().email({ message: "Invalid email address" }),
   password: z
     .string()
     .min(8, "Password must be at least 8 characters long")
@@ -68,120 +59,88 @@ export function SignupForm() {
   };
 
   return (
-    <div className="flex flex-col gap-8">
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl font-semibold leading-tight">
-            Create your account
-          </CardTitle>
-          <CardDescription className="text-sm text-muted-foreground max-w-md">
-            Enter your information to get started
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <div className="grid gap-2">
-              <Label htmlFor="name" className="text-sm font-medium">
-                Name
-              </Label>
-              <Input
-                id="name"
-                type="text"
-                placeholder="John Doe"
-                {...register("name")}
-                className="text-base"
-              />
-              {errors.name && (
-                <p className="mt-1 text-xs text-red-600">
-                  {errors.name.message}
-                </p>
-              )}
-            </div>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 text-left">
+      <div className="grid gap-3">
+        <Label htmlFor="name" className="text-sm font-medium text-gray-700">
+          Full Name
+        </Label>
+        <Input
+          id="name"
+          type="text"
+          placeholder="John Doe"
+          {...register("name")}
+          className="text-base"
+        />
+        {errors.name && (
+          <p className="mt-1 text-xs text-red-600">{errors.name.message}</p>
+        )}
+      </div>
 
-            <div className="grid gap-2">
-              <Label htmlFor="email" className="text-sm font-medium">
-                Email
-              </Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="me@example.com"
-                {...register("email")}
-                className="text-base"
-              />
-              {errors.email && (
-                <p className="mt-1 text-xs text-red-600">
-                  {errors.email.message}
-                </p>
-              )}
-            </div>
+      <div className="grid gap-3">
+        <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+          Email
+        </Label>
+        <Input
+          id="email"
+          type="email"
+          placeholder="me@example.com"
+          {...register("email")}
+          className="text-base"
+        />
+        {errors.email && (
+          <p className="mt-1 text-xs text-red-600">{errors.email.message}</p>
+        )}
+      </div>
 
-            <div className="grid gap-2">
-              <Label htmlFor="password" className="text-sm font-medium">
-                Password
-              </Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                {...register("password")}
-                className="text-base"
-              />
-              {errors.password && (
-                <p className="mt-1 text-xs text-red-600">
-                  {errors.password.message}
-                </p>
-              )}
-            </div>
+      <div className="grid gap-3">
+        <Label htmlFor="password" className="text-sm font-medium text-gray-700">
+          Password
+        </Label>
+        <Input
+          id="password"
+          type="password"
+          placeholder="••••••••"
+          {...register("password")}
+          className="text-base"
+        />
+        {errors.password && (
+          <p className="mt-1 text-xs text-red-600">{errors.password.message}</p>
+        )}
+      </div>
 
-            {error && (
-              <p className="text-center text-sm text-red-700 font-medium">
-                {error}
-              </p>
-            )}
+      {error && (
+        <p className="text-center text-sm text-red-700 font-medium">{error}</p>
+      )}
 
-            <Button
-              type="submit"
-              className="w-full bg-primary text-white text-base font-medium hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-primary/50 disabled:opacity-50 disabled:cursor-not-allowed transition"
-              disabled={loading}
-            >
-              {loading ? "Creating account..." : "Sign up"}
-            </Button>
+      <Button
+        type="submit"
+        className="w-full bg-blue-600 hover:bg-blue-700 text-white text-base font-medium shadow-md hover:shadow-lg transition"
+        disabled={loading}
+      >
+        {loading ? "Creating account..." : "Sign Up"}
+      </Button>
 
-            <div className="relative text-center text-sm text-muted-foreground mb-4">
-              <span className="relative z-10 px-2 bg-background">
-                Or continue with
-              </span>
-              <div className="absolute inset-0 top-1/2 border-t border-border -z-0"></div>
-            </div>
+      <div className="relative text-center text-sm text-gray-500 my-6">
+        <span className="relative z-10 px-2 bg-white/70 backdrop-blur-md">
+          or continue with
+        </span>
+        <div className="absolute inset-0 top-1/2 border-t border-gray-200 -z-0"></div>
+      </div>
 
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full flex items-center justify-center gap-2 border-gray-300 text-gray-700 hover:bg-gray-50 focus-visible:ring-2 focus-visible:ring-primary/40 transition"
-              onClick={() => signIn("google", { callbackUrl: "/" })}
-            >
-              <img
-                src="/Google-icon.svg"
-                alt="Google icon"
-                className="h-5 w-5"
-                aria-hidden="true"
-              />
-              Sign up with Google
-            </Button>
-
-            <div className="mt-6 text-center text-sm text-muted-foreground">
-              Already have an account?{" "}
-              <Link
-                href="/login"
-                className="font-medium text-primary hover:underline focus-visible:underline focus-visible:outline-none"
-              >
-                Login
-              </Link>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
+      <Button
+        type="button"
+        variant="outline"
+        className="w-full flex items-center justify-center gap-2 border-gray-300 text-gray-700 hover:bg-gray-50 transition"
+        onClick={() => signIn("google", { callbackUrl: "/" })}
+      >
+        <img
+          src="/Google-icon.svg"
+          alt="Google icon"
+          className="h-5 w-5"
+          aria-hidden="true"
+        />
+        Continue with Google
+      </Button>
+    </form>
   );
 }
