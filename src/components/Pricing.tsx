@@ -104,7 +104,7 @@ export default function Pricing() {
   return (
     <>
       {/* Pricing Toggle */}
-      <div className="flex justify-center mb-8">
+      <div className="flex justify-center mb-12">
         <Tabs
           defaultValue={frequency}
           onValueChange={(value) => {
@@ -113,19 +113,19 @@ export default function Pricing() {
             }
           }}
         >
-          <TabsList className="bg-gray-100 rounded-full p-1">
+          <TabsList className="bg-white rounded-full p-1 shadow-sm">
             <TabsTrigger
               value="monthly"
-              className="data-[state=active]:bg-white rounded-full px-4 py-1 transition"
+              className="data-[state=active]:bg-blue-600 data-[state=active]:text-white rounded-full px-4 py-1 transition"
             >
               Monthly
             </TabsTrigger>
             <TabsTrigger
               value="yearly"
-              className="data-[state=active]:bg-white rounded-full px-4 py-1 transition flex items-center"
+              className="data-[state=active]:bg-blue-600 data-[state=active]:text-white rounded-full px-4 py-1 transition flex items-center"
             >
               Yearly
-              <Badge className="ml-2 bg-gray-200 text-xs text-gray-800">
+              <Badge className="ml-2 bg-blue-100 text-blue-800 text-xs">
                 20% off
               </Badge>
             </TabsTrigger>
@@ -139,23 +139,25 @@ export default function Pricing() {
           <Card
             key={plan.id}
             className={cn(
-              "border border-gray-200 shadow-sm flex flex-col justify-between",
-              plan.popular && "border-black"
+              "flex flex-col justify-between rounded-xl shadow-lg border border-transparent hover:shadow-xl transition",
+              plan.popular ? "ring-2 ring-blue-500" : "bg-white"
             )}
           >
-            <CardHeader>
-              <div className="flex items-center gap-2 mb-2">
-                <div className="bg-gray-100 p-2 rounded-full">
-                  <plan.icon className="h-4 w-4 text-gray-800" />
+            <CardHeader className="mb-4">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="bg-blue-50 p-2 rounded-full">
+                  <plan.icon className="h-5 w-5 text-blue-600" />
                 </div>
-                <CardTitle className="text-xl">{plan.name}</CardTitle>
+                <CardTitle className="text-xl font-bold text-gray-900">
+                  {plan.name}
+                </CardTitle>
               </div>
-              <CardDescription className="text-sm text-gray-600">
+              <CardDescription className="text-gray-600">
                 {plan.description}
               </CardDescription>
               <div className="mt-4">
                 {typeof plan.price[frequency] === "number" ? (
-                  <div className="text-2xl font-bold">
+                  <div className="text-2xl font-bold text-gray-900 flex items-baseline justify-center">
                     <NumberFlow
                       value={plan.price[frequency] as number}
                       format={{
@@ -167,7 +169,7 @@ export default function Pricing() {
                     <span className="text-sm text-gray-500 ml-1">/month</span>
                   </div>
                 ) : (
-                  <div className="text-2xl font-bold">
+                  <div className="text-2xl font-bold text-gray-900 text-center">
                     {plan.price[frequency]}
                   </div>
                 )}
@@ -175,7 +177,7 @@ export default function Pricing() {
             </CardHeader>
 
             <CardContent>
-              <ul className="space-y-2 text-sm text-gray-700">
+              <ul className="space-y-2 text-gray-700">
                 {plan.features.map((feature, i) => (
                   <li key={i} className="flex items-center gap-2">
                     <Check className="h-4 w-4 text-green-600" />
@@ -186,7 +188,15 @@ export default function Pricing() {
             </CardContent>
 
             <CardFooter>
-              <Button onClick={handleCheckout} className="w-full mt-4">
+              <Button
+                onClick={handleCheckout}
+                className={cn(
+                  "w-full mt-4",
+                  plan.popular
+                    ? "bg-blue-600 hover:bg-blue-700 text-white"
+                    : "bg-white border border-gray-300 text-gray-800 hover:bg-blue-50"
+                )}
+              >
                 {plan.cta}
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
