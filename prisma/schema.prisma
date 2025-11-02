@@ -67,6 +67,7 @@ enum CompressionLevel {
 enum Plan {
   FREE
   PRO
+  PLUS
 }
 
 enum FileStatus {
