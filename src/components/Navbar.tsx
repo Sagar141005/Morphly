@@ -3,12 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
-
-// Simulated auth state
-const userIsLoggedIn = false;
+import { useSession } from "next-auth/react";
 
 const Navbar: React.FC = () => {
+  const { data: session, status } = useSession();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const userIsLoggedIn = !!session?.user;
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-200 shadow-sm">
