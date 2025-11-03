@@ -68,4 +68,61 @@ export default function ImageConversionPage() {
       }
     }
   };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-white via-blue-50/30 to-blue-100/10 flex flex-col">
+      <Navbar />
+
+      <main className="flex-grow">
+        <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-[700px] h-[700px] bg-blue-200/40 blur-[120px] rounded-full pointer-events-none" />
+        <section className="relative pt-36 pb-20 text-center overflow-hidden">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="max-w-3xl mx-auto px-6"
+          >
+            <h1 className="text-5xl font-extrabold tracking-tight text-gray-900 mb-4">
+              Convert Your Files <br />
+              <span className="text-blue-600">Quickly & Seamlessly</span>
+            </h1>
+            <p className="text-lg text-gray-600 leading-relaxed">
+              Upload any document or image — convert it instantly into your
+              desired format.
+              <br className="hidden sm:block" />
+              100% browser-based, secure, and lightning-fast.
+            </p>
+          </motion.div>
+        </section>
+
+        <section id="converter" className="relative z-10 py-10">
+          <div className="max-w-3xl mx-auto px-4 sm:px-0">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <div className="flex justify-center items-center gap-2 text-blue-600 mb-6">
+                <ImageIcon className="w-5 h-5" />
+                <span className="font-semibold text-sm uppercase tracking-wide">
+                  File Conversion Tool
+                </span>
+              </div>
+
+              <DragAndDropUploader
+                showFormatSelect
+                onSubmit={handleConvert}
+                getFormatsForFile={getAvailableFormats}
+                buttonLabel="Convert Files"
+              />
+
+              <ConversionOverview />
+            </motion.div>
+          </div>
+        </section>
+      </main>
+
+      <Footer />
+    </div>
+  );
 }
