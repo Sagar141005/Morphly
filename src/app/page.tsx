@@ -4,6 +4,8 @@ import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import DragAndDropUploader from "@/components/DragAndDropUploader";
+import Lottie from "lottie-react";
+import morphingAnimation from "../../public/animations/morphing-animation.json";
 import Pricing from "@/components/Pricing";
 import { UploadFile } from "@/types/type";
 import Footer from "@/components/Footer";
@@ -131,6 +133,25 @@ export default function Home() {
                 </Link>
               </Button>
             </motion.div>
+
+            {/* 🎬 Lottie Animation */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.4 }}
+              className="mt-20 flex justify-center"
+            >
+              <div className="absolute left-1/2 -translate-x-1/2 top-[70%] w-[200px] h-[200px] bg-blue-200/40 blur-3xl rounded-full"></div>
+
+              <div className="w-[160px] md:w-[210px] lg:w-[300px]">
+                <Lottie
+                  animationData={morphingAnimation}
+                  loop
+                  autoplay
+                  className="drop-shadow-lg"
+                />
+              </div>
+            </motion.div>
           </div>
         </section>
 
@@ -169,7 +190,7 @@ export default function Home() {
               {features.map((feature) => (
                 <div
                   key={feature.title}
-                  className="p-6 bg-neutral-50 transition duration-300 ease-in-out transform hover:shadow-xl rounded-xl border border-gray-100"
+                  className="p-6 bg-gradient-to-br from-white/20 to-white/80 backdrop-blur-sm border border-gray-100 hover:translate-y-1 transition-all duration-300 ease-in-out transform hover:shadow-xl rounded-xl"
                 >
                   <div
                     className={`p-3 inline-flex items-center justify-center ${feature.bgColor} rounded-md mb-4`}
