@@ -220,18 +220,21 @@ const ConversionOverview: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5, duration: 0.6 }}
-          className="relative py-24"
+          className="relative py-24 bg-gradient-to-b from-white via-neutral-50 to-neutral-100 rounded-2xl"
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-200 via-blue-400/70 to-blue-500/80 border-blue-200 rounded-3xl opacity-60 pointer-events-none" />
-          <div className="relative max-w-6xl mx-auto px-6 text-center text-neutral-900">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-sm mb-6">
-              <ShieldCheck className="w-4 h-4 text-[#10B981]" />
-              <span className="text-sm font-semibold">Enterprise Security</span>
+          <div className="relative max-w-6xl mx-auto px-6 text-center">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-100 mb-6">
+              <ShieldCheck className="w-4 h-4 text-green-500" />
+              <span className="text-sm font-semibold text-gray-700">
+                Enterprise Security
+              </span>
             </div>
-            <h3 className="text-3xl md:text-4xl font-bold mb-6 tracking-tight">
+
+            <h3 className="text-3xl md:text-4xl font-bold mb-6 tracking-tight text-gray-900">
               Your Privacy is Our Priority
             </h3>
-            <p className="text-lg text-neutral-900 leading-relaxed max-w-3xl mx-auto mb-10">
+
+            <p className="text-lg text-gray-600 leading-relaxed max-w-3xl mx-auto mb-10">
               Files are processed securely in-memory with automatic cleanup. We
               use encrypted HTTPS connections and never store your files
               permanently.
@@ -242,32 +245,28 @@ const ConversionOverview: React.FC = () => {
                 {
                   icon: Lock,
                   text: "HTTPS Encryption",
-                  color: "text-[#10B981]",
+                  color: "text-green-500",
                 },
                 {
                   icon: ShieldCheck,
                   text: "In-Memory Only",
-                  color: "text-[#3B82F6]",
+                  color: "text-blue-500",
                 },
-                {
-                  icon: Clock,
-                  text: "Auto Cleanup",
-                  color: "text-[#8B5CF6]",
-                },
+                { icon: Clock, text: "Auto Cleanup", color: "text-purple-500" },
                 {
                   icon: CheckCircle,
                   text: "Zero Storage",
-                  color: "text-[#F59E0B]",
+                  color: "text-yellow-500",
                 },
               ].map((item) => {
                 const Icon = item.icon;
                 return (
                   <div
                     key={item.text}
-                    className="bg-white/15 backdrop-blur-sm border border-white/10 rounded-2xl p-6 transition-colors hover:bg-white/20"
+                    className="bg-blue-50/50 border border-blue-100 rounded-2xl p-6 transition-all hover:shadow-md"
                   >
                     <Icon className={`w-8 h-8 ${item.color} mb-3 mx-auto`} />
-                    <p className="text-white font-semibold text-sm text-center">
+                    <p className="text-gray-900 font-semibold text-sm text-center">
                       {item.text}
                     </p>
                   </div>
