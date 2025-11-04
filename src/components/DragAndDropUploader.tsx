@@ -15,10 +15,23 @@ interface DragAndDropUploaderProps {
 
 const getIconForFile = (type: string) => {
   if (type.startsWith("image/"))
-    return <FileImage className="text-blue-500/80" />;
-  if (type.startsWith("application/pdf"))
-    return <FileText className="text-red-500/80" />;
-  return <FileIcon className="text-gray-500/80" />;
+    return <FileImage className="w-5 h-5 text-blue-500/80" />;
+
+  if (type === "application/pdf" || type.includes("pdf"))
+    return <FileText className="w-5 h-5 text-rose-500/80" />;
+
+  if (
+    type ===
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+    type.includes("word") ||
+    type.includes("docx")
+  )
+    return <FileText className="w-5 h-5 text-violet-500/80" />;
+
+  if (type.startsWith("text/") || type.includes("plain"))
+    return <FileText className="w-5 h-5 text-gray-500/70" />;
+
+  return <FileIcon className="w-5 h-5 text-gray-400/70" />;
 };
 
 export default function DragAndDropUploader({
@@ -100,21 +113,25 @@ export default function DragAndDropUploader({
         </p>
       </div>
 
-      {/* File List */}
       {files.length > 0 && (
         <>
-          <div className="space-y-4">
+          <div className="space-y-3">
             {files.map((item, index) => (
               <div
                 key={index}
-                className="flex items-center justify-between p-2 border border-neutral-300 rounded-md shadow-sm bg-neutral-100/20 transition-colors duration-300 hover:bg-neutral-200/50"
+                className="group relative flex items-center justify-between bg-white/70 border border-gray-100 backdrop-blur-md rounded-2xl p-4 transition-all duration-300 hover:border-blue-200 hover:shadow-md hover:shadow-blue-100/40"
               >
-                <div className="flex items-center gap-4">
-                  <div className="text-blue-500">
-                    {getIconForFile(item.file.type)}
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-400/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+
+                <div className="flex items-center gap-4 relative z-10">
+                  <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+                    <div className="text-blue-600">
+                      {getIconForFile(item.file.type)}
+                    </div>
                   </div>
+
                   <div>
-                    <p className="font-semibold text-sm truncate max-w-xs">
+                    <p className="font-semibold text-gray-900 text-sm truncate max-w-xs">
                       {item.file.name}
                     </p>
                     <p className="text-xs text-gray-500">
@@ -123,14 +140,14 @@ export default function DragAndDropUploader({
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3 relative z-10">
                   {showFormatSelect && (
                     <select
                       value={item.format}
                       onChange={(e) =>
                         handleFormatChange(index, e.target.value)
                       }
-                      className="text-center border border-neutral-300 bg-neutral-200/10 text-gray-700 text-xs h-8 px-2 py-1.5 rounded-lg focus:ring-blue-500 focus:border-blue-500 appearance-none transition"
+                      className="text-sm font-medium text-gray-700 border border-gray-200 bg-white/50 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-300 transition-all cursor-pointer"
                     >
                       {getFormatsForFile(item.file.type, item.file.name).map(
                         (format) => (
@@ -143,29 +160,28 @@ export default function DragAndDropUploader({
                   )}
                   <button
                     onClick={() => removeFile(index)}
-                    className="p-2 text-gray-400 hover:text-red-500 rounded-full transition-colors"
+                    className="p-2 text-gray-400 hover:text-red-500 rounded-full hover:bg-red-50 transition-colors"
                   >
-                    <X size={20} />
+                    <X size={18} />
                   </button>
                 </div>
               </div>
             ))}
           </div>
 
-          <div className="w-full flex justify-center pt-4">
+          <div className="w-full flex justify-center pt-6">
             <button
               onClick={handleSubmit}
               disabled={loading || files.length === 0}
-              className={`w-64 text-white px-4 py-3 rounded-xl font-semibold text-md transition-all duration-200 shadow-md 
-                ${
-                  loading || files.length === 0
-                    ? "bg-blue-400 cursor-not-allowed shadow-none"
-                    : "bg-blue-500 hover:bg-blue-600 shadow-blue-500/50 hover:shadow-blue-500/70"
-                }
-              `}
+              className={`w-48 flex items-center justify-center gap-2 px-5 py-3 text-sm sm:text-base font-semibold rounded-lg transition-all duration-300 shadow-sm
+      ${
+        loading || files.length === 0
+          ? "bg-blue-300 text-white cursor-not-allowed shadow-none"
+          : "bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg hover:shadow-blue-500/30"
+      }`}
             >
               {loading ? (
-                <div className="flex items-center justify-center gap-2">
+                <>
                   <svg
                     className="animate-spin h-5 w-5 text-white"
                     xmlns="http://www.w3.org/2000/svg"
@@ -186,10 +202,10 @@ export default function DragAndDropUploader({
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                     ></path>
                   </svg>
-                  Processing...
-                </div>
+                  <span>Processing...</span>
+                </>
               ) : (
-                buttonLabel
+                <span>{buttonLabel}</span>
               )}
             </button>
           </div>
