@@ -4,6 +4,7 @@ import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { FileIcon, FileText, FileImage, X } from "lucide-react";
 import type { UploadFile } from "@/types/type";
+import { usePathname, useRouter } from "next/navigation";
 
 interface DragAndDropUploaderProps {
   showFormatSelect?: boolean;
@@ -47,16 +48,32 @@ export default function DragAndDropUploader({
 }: DragAndDropUploaderProps) {
   const [files, setFiles] = useState<UploadFile[]>([]);
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname();
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
+      if (!acceptedFiles || acceptedFiles.length === 0) return;
+
       const newFiles: UploadFile[] = acceptedFiles.map((file) => ({
         file,
         format: getFormatsForFile(file.type, file.name)[0] ?? "",
       }));
       setFiles((prev) => [...prev, ...newFiles]);
+
+      // Only redirect if we're on the home page
+      if (pathname === "/") {
+        const file = acceptedFiles[0];
+        const ext = file.name.split(".").pop()?.toLowerCase();
+
+        if (ext === "pdf" || ext === "docx" || ext === "txt") {
+          router.push("/pdf/convert");
+        } else if (ext === "png" || ext === "jpg" || ext === "webp") {
+          router.push("/image/convert");
+        }
+      }
     },
-    [getFormatsForFile]
+    [getFormatsForFile, router, pathname]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
