@@ -57,26 +57,42 @@ const Footer: React.FC = () => {
               <ul className="space-y-2">
                 <li>
                   <Link
-                    href="#features"
+                    href="/image/convert"
                     className="hover:text-blue-600 transition-colors"
                   >
-                    Features
+                    Image Convert
                   </Link>
                 </li>
                 <li>
                   <Link
-                    href="/pricing"
+                    href="/image/removebg"
                     className="hover:text-blue-600 transition-colors"
                   >
-                    Pricing
+                    AI BG Removal
                   </Link>
                 </li>
                 <li>
                   <Link
-                    href="/blog"
+                    href="/file/convert"
                     className="hover:text-blue-600 transition-colors"
                   >
-                    Blog
+                    File Convert
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/file/merge"
+                    className="hover:text-blue-600 transition-colors"
+                  >
+                    File Merge
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/file/split"
+                    className="hover:text-blue-600 transition-colors"
+                  >
+                    File Split
                   </Link>
                 </li>
               </ul>
