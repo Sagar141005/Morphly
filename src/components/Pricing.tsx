@@ -26,52 +26,59 @@ const plans = [
       yearly: "Free forever",
     },
     description:
-      "A simple way to convert your files instantly — no strings attached.",
+      "Get started with essential tools and daily free credits — perfect for quick conversions.",
     features: [
-      "Convert between popular formats (PNG → JPG, JPG → PDF, etc.)",
-      "No file storage — instant download only",
-      "Limit: 5 conversions/day, max 5MB per file",
-      "Conversion logs available (no download history)",
+      "Includes core tools: convert, compress, merge, split",
+      "No AI tools access in this plan",
+      "5 credits/day (renews every 24h)",
+      "Max file size: 10MB",
+      "No storage — instant download only",
+      "Basic conversion logs (no cloud history)",
     ],
     cta: "Get started for free",
   },
   {
-    id: "pro",
-    name: "Pro",
+    id: "plus",
+    name: "Plus",
     icon: Zap,
     price: {
-      monthly: 19,
-      yearly: 10,
+      monthly: 4.99,
+      yearly: 3.99,
     },
     description:
-      "Upgrade for powerful tools, cloud access, and unlimited conversions.",
+      "Higher credits and access to AI tools — great for regular creators and professionals.",
     features: [
       "All Free features included",
-      "AI Background Removal",
-      "Cloud-based file storage with 30-day retention",
-      "View your conversion history anytime",
-      "Limit: Unlimited conversions, up to 50MB per file",
+      "25 credits/day (renews every 24h)",
+      "AI tools included",
+      "Faster conversion & priority queue",
+      "Max file size: 100MB",
+      "30-day cloud history",
+      "Email support",
     ],
-    cta: "Subscribe to Pro",
+    cta: "Upgrade to Plus",
     popular: true,
   },
   {
-    id: "enterprise",
-    name: "Enterprise",
+    id: "pro",
+    name: "Pro",
     icon: Shield,
     price: {
-      monthly: "Contact us for pricing",
-      yearly: "Contact us for pricing",
+      monthly: 9.99,
+      yearly: 7.99,
     },
-    description: "Built for teams, automation, and high-volume file workflows.",
+    description:
+      "Unlimited productivity with generous credits, premium AI tools, and cloud storage.",
     features: [
-      "Everything in Pro",
-      "Team access with role-based controls",
-      "Advanced analytics & usage insights",
-      "API access for automated file processing",
-      "Priority support with custom onboarding",
+      "All Plus features included",
+      "Unlimited basic conversions",
+      "100 AI credits/month",
+      "Max file size: 500MB",
+      "Cloud storage with 90-day retention",
+      "Team sharing & advanced analytics",
+      "Priority support & early access to new tools",
     ],
-    cta: "Contact Sales",
+    cta: "Subscribe to Pro",
   },
 ];
 
@@ -103,7 +110,6 @@ export default function Pricing() {
 
   return (
     <>
-      {/* Pricing Toggle */}
       <div className="flex justify-center mb-12">
         <Tabs
           defaultValue={frequency}
@@ -133,14 +139,15 @@ export default function Pricing() {
         </Tabs>
       </div>
 
-      {/* Pricing Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {plans.map((plan) => (
           <Card
             key={plan.id}
             className={cn(
               "flex flex-col justify-between rounded-xl shadow-lg border border-transparent hover:shadow-xl transition",
-              plan.popular ? "ring-2 ring-blue-500" : "bg-white"
+              plan.popular
+                ? "ring-2 ring-blue-500"
+                : "bg-white  hover:scale-102 hover:ring-2 hover:ring-blue-200"
             )}
           >
             <CardHeader className="mb-4">
@@ -163,7 +170,7 @@ export default function Pricing() {
                       format={{
                         style: "currency",
                         currency: "USD",
-                        maximumFractionDigits: 0,
+                        maximumFractionDigits: 2,
                       }}
                     />
                     <span className="text-sm text-gray-500 ml-1">/month</span>
@@ -179,9 +186,13 @@ export default function Pricing() {
             <CardContent>
               <ul className="space-y-2 text-gray-700">
                 {plan.features.map((feature, i) => (
-                  <li key={i} className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-green-600" />
-                    <span>{feature}</span>
+                  <li key={i} className="flex items-start gap-2">
+                    <div className="flex-shrink-0 mt-1">
+                      <Check className="h-4 w-4 text-green-600" />
+                    </div>
+                    <span className="text-gray-700 leading-snug">
+                      {feature}
+                    </span>
                   </li>
                 ))}
               </ul>
