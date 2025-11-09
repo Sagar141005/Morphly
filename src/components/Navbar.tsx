@@ -14,7 +14,6 @@ const Navbar: React.FC = () => {
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-200 shadow-sm">
       <nav className="w-full px-4 sm:px-6 lg:px-8" aria-label="Navigation">
         <div className="flex justify-between items-center h-16">
-          {/* Logo */}
           <div className="flex items-center gap-8">
             <Link
               href="/"
@@ -24,16 +23,12 @@ const Navbar: React.FC = () => {
               orphly
             </Link>
 
-            {/* Desktop Menu */}
             <div className="hidden sm:flex items-center gap-6">
-              {/* Convert Dropdown */}
               <div className="relative group">
-                {/* Parent button */}
                 <button className="text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors flex items-center gap-0.5">
                   Image <ChevronDown className="w-4 h-4" />
                 </button>
 
-                {/* Dropdown */}
                 <div className="absolute left-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg opacity-0 invisible group-hover:visible group-hover:opacity-100 transition-all duration-150 z-50">
                   <Link
                     href="/image/convert"
@@ -49,15 +44,11 @@ const Navbar: React.FC = () => {
                   </Link>
                 </div>
               </div>
-
-              {/* Convert Dropdown */}
               <div className="relative group">
-                {/* Parent button */}
                 <button className="text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors flex items-center gap-0.5">
                   PDF <ChevronDown className="w-4 h-4" />
                 </button>
 
-                {/* Dropdown */}
                 <div className="absolute left-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg opacity-0 invisible group-hover:visible group-hover:opacity-100 transition-all duration-150 z-50">
                   <Link
                     href="/file/convert"
@@ -80,7 +71,6 @@ const Navbar: React.FC = () => {
                 </div>
               </div>
 
-              {/* Pricing */}
               <Link
                 href="/pricing"
                 className="text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors"
@@ -90,7 +80,6 @@ const Navbar: React.FC = () => {
             </div>
           </div>
 
-          {/* Desktop Actions */}
           <div className="hidden sm:flex items-center gap-4">
             {userIsLoggedIn ? (
               <Link
@@ -117,7 +106,6 @@ const Navbar: React.FC = () => {
             )}
           </div>
 
-          {/* Mobile menu button */}
           <div className="md:hidden flex items-center">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -129,54 +117,50 @@ const Navbar: React.FC = () => {
           </div>
         </div>
 
-        {/* Mobile menu */}
         {isMobileMenuOpen && (
           <div className="md:hidden mt-3 space-y-3 pb-4 px-1">
-            {/* Convert */}
             <div className="space-y-1">
               <span className="block px-2 py-1 text-gray-700 font-medium">
                 Convert
               </span>
               <Link
-                href="/image-convert"
+                href="/image/convert"
                 className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
               >
                 Image Convert
               </Link>
               <Link
-                href="/ai-bg-remove"
+                href="/image/removebg"
                 className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
               >
                 AI BG Remove
               </Link>
             </div>
 
-            {/* PDF */}
             <div className="space-y-1">
               <span className="block px-2 py-1 text-gray-700 font-medium">
                 PDF
               </span>
               <Link
-                href="/pdf-convert"
+                href="/file/convert"
                 className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
               >
                 PDF Convert
               </Link>
               <Link
-                href="/pdf-merge"
+                href="/file/merge"
                 className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
               >
                 Merge PDF
               </Link>
               <Link
-                href="/pdf-split"
+                href="/file/split"
                 className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
               >
                 Split PDF
               </Link>
             </div>
 
-            {/* Pricing */}
             <Link
               href="/pricing"
               className="block text-base font-medium text-gray-700 hover:text-blue-600 px-2 transition-colors"

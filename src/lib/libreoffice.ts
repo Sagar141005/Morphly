@@ -16,7 +16,6 @@ export async function convertWithLibreOffice(
 
   const ext = path.extname(inputPath).toLowerCase();
 
-  // Restrict LibreOffice to reliable conversions
   if (ext === ".pdf" && ["docx", "txt"].includes(targetFormat)) {
     throw new Error(
       "LibreOffice cannot convert PDF → DOCX/TXT reliably; use PDF reader instead."
