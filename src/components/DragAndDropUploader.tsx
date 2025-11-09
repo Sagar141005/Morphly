@@ -61,13 +61,12 @@ export default function DragAndDropUploader({
       }));
       setFiles((prev) => [...prev, ...newFiles]);
 
-      // Only redirect if we're on the home page
       if (pathname === "/") {
         const file = acceptedFiles[0];
         const ext = file.name.split(".").pop()?.toLowerCase();
 
         if (ext === "pdf" || ext === "docx" || ext === "txt") {
-          router.push("/pdf/convert");
+          router.push("/file/convert");
         } else if (ext === "png" || ext === "jpg" || ext === "webp") {
           router.push("/image/convert");
         }
@@ -105,7 +104,6 @@ export default function DragAndDropUploader({
 
   return (
     <div className="max-w-xl mx-auto space-y-8 p-4 sm:p-0">
-      {/* Dropzone Area */}
       <div
         {...getRootProps()}
         className={`h-64 flex flex-col items-center justify-center border-2 border-dashed rounded-xl p-6 text-center transition-all duration-300 cursor-pointer ${
@@ -190,7 +188,7 @@ export default function DragAndDropUploader({
             <button
               onClick={handleSubmit}
               disabled={loading || files.length === 0}
-              className={`w-48 flex items-center justify-center gap-2 px-5 py-3 text-sm sm:text-base font-semibold rounded-lg transition-all duration-300 shadow-sm
+              className={`w-64 flex items-center justify-center gap-2 px-5 py-3 text-sm sm:text-base font-semibold rounded-lg transition-all duration-300 shadow-sm
       ${
         loading || files.length === 0
           ? "bg-blue-300 text-white cursor-not-allowed shadow-none"
