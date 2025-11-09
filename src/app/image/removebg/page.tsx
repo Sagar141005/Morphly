@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ConversionOverview from "@/components/ConversionOverview";
-import { ImageIcon } from "lucide-react";
+import { Download, Brush } from "lucide-react";
 
 export default function RemoveBGPage() {
   const [resultURL, setResultURL] = useState<string | null>(null);
@@ -45,10 +45,8 @@ export default function RemoveBGPage() {
       <Navbar />
 
       <main className="flex-grow">
-        {/* Background blur */}
-        <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-[700px] h-[700px] bg-blue-200/40 blur-[120px] rounded-full pointer-events-none" />
+        <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-[700px] h-[700px] bg-pink-200/40 blur-[120px] rounded-full pointer-events-none" />
 
-        {/* Hero Section */}
         <section className="relative pt-36 pb-20 text-center overflow-hidden">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -67,7 +65,6 @@ export default function RemoveBGPage() {
           </motion.div>
         </section>
 
-        {/* Uploader Section */}
         <section id="removebg" className="relative z-10 py-10">
           <div className="max-w-3xl mx-auto px-4 sm:px-0">
             <motion.div
@@ -75,8 +72,8 @@ export default function RemoveBGPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <div className="flex justify-center items-center gap-2 text-blue-600 mb-6">
-                <ImageIcon className="w-4 h-4" />
+              <div className="flex justify-center items-center gap-2 text-pink-600 mb-6">
+                <Brush className="w-4 h-4" />
                 <span className="font-semibold text-sm uppercase tracking-wide">
                   AI Background Removal Tool
                 </span>
@@ -89,32 +86,57 @@ export default function RemoveBGPage() {
                 buttonLabel="Remove Background"
                 getFormatsForFile={() => []}
               />
-
-              {/* Error */}
               {error && (
                 <p className="text-red-500 font-medium mt-4">Error: {error}</p>
               )}
 
-              {/* Result */}
               {resultURL && (
-                <div className="mt-6 text-center">
-                  <h2 className="font-semibold mb-2">Result:</h2>
-                  <img
-                    src={resultURL}
-                    alt="Background Removed"
-                    className="max-w-full rounded shadow mx-auto"
-                  />
-                  <a
-                    href={resultURL}
-                    download
-                    className="mt-2 inline-block text-blue-600 underline"
-                  >
-                    Download Image
-                  </a>
-                </div>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6 }}
+                  className="mt-10 flex justify-center"
+                >
+                  <div className="relative w-full max-w-xl bg-white/60 backdrop-blur-xl border border-white/50 shadow-lg rounded-2xl p-6 text-center">
+                    <div className="absolute inset-0 -z-10 bg-gradient-to-b from-blue-100/40 to-pink-100/30 rounded-2xl blur-xl opacity-60" />
+
+                    <h3 className="text-lg font-semibold text-gray-800 mb-3">
+                      Background Removed Successfully 🎉
+                    </h3>
+                    <p className="text-sm text-gray-600 mb-6">
+                      Your image is ready! You can preview or download it below.
+                    </p>
+
+                    <div className="relative rounded-xl overflow-hidden border border-gray-200 shadow-md">
+                      <img
+                        src={resultURL}
+                        alt="Background Removed"
+                        className="w-full h-auto object-contain"
+                      />
+                    </div>
+
+                    <div className="mt-6 flex flex-col sm:flex-row justify-center gap-3">
+                      <a
+                        href={resultURL}
+                        download
+                        className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition-all shadow-sm"
+                      >
+                        <Download className="w-4 h-4" />
+                        Download Image
+                      </a>
+
+                      <button
+                        onClick={() => setResultURL(null)}
+                        className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-white text-gray-700 border border-gray-300 font-medium hover:bg-gray-50 transition-all"
+                      >
+                        <Brush className="w-4 h-4" />
+                        Try Another
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
               )}
 
-              {/* Reuse the ConversionOverview Section */}
               <ConversionOverview />
             </motion.div>
           </div>
