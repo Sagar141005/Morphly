@@ -6,43 +6,37 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { uploadToSupabase } from "@/lib/supabase";
-import pdfParseMod from "pdf-parse";
-import PDFDocument from "pdfkit";
-import { Document, Packer, Paragraph, TextRun } from "docx";
+import { Document, Packer, Paragraph } from "docx";
+import { PdfReader } from "pdfreader";
+import { convertWithLibreOffice } from "@/lib/libreoffice";
+import FormData from "form-data";
+import axios from "axios";
 
 const readFile = promisify(fs.readFile);
-const pdfParse = pdfParseMod as unknown as (
-  buffer: Buffer
-) => Promise<{ text: string }>;
 
 export const config = {
-  api: {
-    bodyParser: false,
-  },
+  api: { bodyParser: false },
 };
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  if (req.method !== "POST") {
+  if (req.method !== "POST")
     return res.status(405).json({ error: "Method not allowed" });
-  }
 
   const session = await getServerSession(req, res, authOptions);
-  if (!session?.user.email) {
+  if (!session?.user.email)
     return res.status(401).json({ error: "Unauthorized" });
-  }
 
   const form = formidable({ multiples: false });
   const data = await new Promise<{
     fields: formidable.Fields;
     files: formidable.Files;
   }>((resolve, reject) => {
-    form.parse(req as any, (err, fields, files) => {
-      if (err) reject(err);
-      else resolve({ fields, files });
-    });
+    form.parse(req as any, (err, fields, files) =>
+      err ? reject(err) : resolve({ fields, files })
+    );
   });
 
   const uploadedFile = data.files.file;
@@ -52,77 +46,98 @@ export default async function handler(
     ? rawFormat[0]?.toLowerCase()
     : rawFormat?.toLowerCase();
 
-  if (!file || !targetFormat) {
+  if (!file || !targetFormat)
     return res.status(400).json({ error: "Missing file or target format" });
-  }
 
   const buffer = await readFile(file.filepath);
   const mimetype = file.mimetype || "";
-
   let outputBuffer: Buffer;
-  let outputFilename = `converted.${targetFormat}`;
+  const outputFilename = `converted.${targetFormat}`;
 
   try {
-    // --------- PDF to TXT ---------
+    // --------- PDF to DOCX via Python microservice ---------
     if (mimetype.includes("pdf") && targetFormat === "docx") {
-      const data = await pdfParse(buffer);
-      outputBuffer = Buffer.from(data.text.trim(), "utf-8");
+      const formData = new FormData();
+      formData.append(
+        "file",
+        fs.createReadStream(file.filepath),
+        file.originalFilename ?? "upload.pdf"
+      );
 
-      // --------- PDF to DOCX ---------
-    } else if (mimetype.includes("pdf") && targetFormat === "docx") {
-      const data = await pdfParse(buffer);
-      const doc = new Document({
-        sections: [
+      console.log("Sending file:", file.originalFilename, "size:", file.size);
+
+      try {
+        const response = await axios.post(
+          "http://localhost:5001/convert/pdf2docx",
+          formData,
           {
-            children: [new Paragraph(data.text.trim())],
-          },
-        ],
-      });
-      outputBuffer = await Packer.toBuffer(doc);
+            headers: formData.getHeaders(),
+            responseType: "arraybuffer",
+          }
+        );
 
-      // --------- TXT to PDF ---------
-    } else if (mimetype.includes("text/plain") && targetFormat === "pdf") {
-      const text = buffer.toString("utf-8");
-      const pdfDoc = new PDFDocument();
-      const stream = pdfDoc.pipe(fs.createWriteStream("/tmp/temp.pdf"));
-      pdfDoc.fontSize(12).text(text);
-      pdfDoc.end();
-      await new Promise<void>((resolve) => {
-        stream.on("finish", resolve);
-      });
-      outputBuffer = await readFile("/tmp/temp/pdf");
+        outputBuffer = Buffer.from(response.data);
+      } catch (error: any) {
+        console.error(
+          "Python service response:",
+          error.response?.data || error.message
+        );
+        throw new Error(
+          `Python service error: ${error.response?.status || 500} ${
+            error.response?.statusText || ""
+          }`
+        );
+      }
 
-      // --------- TXT to DOCX ---------
+      // --------- PDF to TXT (text-only extraction) ---------
+    } else if (mimetype.includes("pdf") && targetFormat === "txt") {
+      let text = "";
+      await new Promise<void>((resolve, reject) => {
+        new PdfReader().parseBuffer(buffer, (err, item) => {
+          if (err) reject(err);
+          else if (!item) resolve();
+          else if (item.text) text += item.text + "\n";
+        });
+      });
+      outputBuffer = Buffer.from(text.trim(), "utf-8");
+
+      // --------- TXT to DOCX/PDF and DOCX to PDF/TXT via LibreOffice ---------
+    } else if (
+      (mimetype.includes("text/plain") &&
+        ["docx", "pdf"].includes(targetFormat)) ||
+      (mimetype.includes("word") &&
+        ["pdf", "txt", "docx"].includes(targetFormat)) ||
+      (mimetype.includes("application/pdf") && targetFormat === "pdf")
+    ) {
+      const convertedFilePath = await convertWithLibreOffice(
+        file.filepath,
+        targetFormat
+      );
+      outputBuffer = await fs.promises.readFile(convertedFilePath);
+
+      // --------- TXT to DOCX fallback ---------
     } else if (mimetype.includes("text/plain") && targetFormat === "docx") {
       const text = buffer.toString("utf-8");
       const doc = new Document({
-        sections: [
-          {
-            children: [new Paragraph(text)],
-          },
-        ],
+        sections: [{ children: [new Paragraph(text)] }],
       });
       outputBuffer = await Packer.toBuffer(doc);
 
-      // --------- DOCX to PDF (future) ---------
-    } else if (mimetype.includes("word") && targetFormat === "pdf") {
-      return res.status(501).json({ error: "DOCX to PDF not implemented" });
+      // --------- Unsupported conversion ---------
     } else {
       return res
         .status(400)
         .json({ error: "Unsupported file/format conversion" });
     }
   } catch (error: any) {
+    console.error("Conversion error:", error);
     return res.status(500).json({ error: error.message || "Conversion error" });
   }
 
   const user = await prisma.user.findUnique({
     where: { email: session.user.email },
   });
-
-  if (!user) {
-    return res.status(404).json({ error: "User not found" });
-  }
+  if (!user) return res.status(404).json({ error: "User not found" });
 
   if (user.plan === "FREE") {
     res.setHeader("Content-Type", "application/octet-stream");
@@ -132,8 +147,11 @@ export default async function handler(
     );
     return res.send(outputBuffer);
   } else {
-    const fileURL = await uploadToSupabase(outputBuffer, outputFilename, "pdf");
-
+    const fileURL = await uploadToSupabase(
+      outputBuffer,
+      outputFilename,
+      targetFormat as "pdf" | "converted" | "bg-removed"
+    );
     await prisma.file.create({
       data: {
         name: file.originalFilename ?? outputFilename,
@@ -144,7 +162,6 @@ export default async function handler(
         status: "PROCESSED",
       },
     });
-
     return res.status(200).json({ url: fileURL });
   }
 }
