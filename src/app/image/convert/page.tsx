@@ -6,7 +6,7 @@ import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import type { UploadFile } from "@/types/type";
 import { motion } from "framer-motion";
-import { ImageIcon } from "lucide-react";
+import { Images } from "lucide-react";
 
 const getAvailableFormats = (type: string, name: string) => {
   const lowerName = name.toLocaleLowerCase();
@@ -103,7 +103,7 @@ export default function ImageConversionPage() {
               transition={{ duration: 0.6 }}
             >
               <div className="flex justify-center items-center gap-2 text-blue-600 mb-6">
-                <ImageIcon className="w-5 h-5" />
+                <Images className="w-5 h-5" />
                 <span className="font-semibold text-sm uppercase tracking-wide">
                   File Conversion Tool
                 </span>
