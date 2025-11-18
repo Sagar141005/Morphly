@@ -42,6 +42,16 @@ export default async function handler(
   });
 
   const uploadedFile = data.files.file;
+  let pageRange: string | string[] | undefined = data.fields.range as any;
+
+  if (Array.isArray(pageRange)) {
+    pageRange = pageRange[0];
+  }
+
+  if (!pageRange || typeof pageRange !== "string") {
+    return res.status(400).json({ error: "Missing or invalid page range" });
+  }
+
   const file = Array.isArray(uploadedFile) ? uploadedFile[0] : uploadedFile;
 
   if (!file || !file.mimetype?.includes("pdf")) {
@@ -65,14 +75,35 @@ export default async function handler(
   const zip = new JSZip();
   const downloadFiles: { name: string; buffer: Buffer }[] = [];
 
+  function parsePageRange(range: string, total: number): number[] {
+    if (range === "all") return Array.from({ length: total }, (_, i) => i);
+
+    let pages: number[] = [];
+
+    const parts = range.split(",").map((p) => p.trim());
+
+    for (let part of parts) {
+      if (part.includes("-")) {
+        const [start, end] = part.split("-").map(Number);
+        for (let i = start; i <= end; i++) pages.push(i - 1);
+      } else {
+        pages.push(Number(part) - 1);
+      }
+    }
+
+    return pages.filter((p) => p >= 0 && p < total);
+  }
+
   try {
-    for (let i = 0; i < totalPages; i++) {
+    const selectedPages = parsePageRange(pageRange, totalPages);
+
+    for (let p of selectedPages) {
       const newPDF = await PDFDocument.create();
-      const [copiedPage] = await newPDF.copyPages(originalPDF, [i]);
+      const [copiedPage] = await newPDF.copyPages(originalPDF, [p]);
       newPDF.addPage(copiedPage);
       const pdfBytes = await newPDF.save();
       const pdfBuffer = Buffer.from(pdfBytes);
-      const fileName = `page-${i + 1}.pdf`;
+      const fileName = `page-${p + 1}.pdf`;
 
       if (user.plan === "PRO") {
         const fileUrl = await uploadToSupabase(pdfBuffer, fileName, "pdf");
@@ -87,25 +118,25 @@ export default async function handler(
             status: "PROCESSED",
           },
         });
+
+        downloadFiles.push({ name: fileUrl, buffer: pdfBuffer });
       } else {
         zip.file(fileName, pdfBuffer);
-      }
-
-      downloadFiles.push({ name: fileName, buffer: pdfBuffer });
-
-      if (user.plan === "FREE") {
-        const zipBuffer = await zip.generateAsync({ type: "nodebuffer" });
-
-        res.setHeader("Content-Type", "application/zip");
-        res.setHeader("Content-Disposition", "attachment; filename=split.zip");
-        return res.send(zipBuffer);
-      } else {
-        return res.status(200).json({
-          message: "PDF split successfully",
-          files: downloadFiles.map((f) => f.name),
-        });
+        downloadFiles.push({ name: fileName, buffer: pdfBuffer });
       }
     }
+
+    if (user.plan === "FREE") {
+      const zipBuffer = await zip.generateAsync({ type: "nodebuffer" });
+
+      res.setHeader("Content-Type", "application/zip");
+      res.setHeader("Content-Disposition", "attachment; filename=split.zip");
+      return res.send(zipBuffer);
+    }
+    return res.status(200).json({
+      message: "PDF split successfully",
+      files: downloadFiles.map((f) => f.name),
+    });
   } catch (error: any) {
     console.error("PDF split failed:", error);
     return res
