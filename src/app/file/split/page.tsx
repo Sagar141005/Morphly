@@ -10,6 +10,8 @@ import { Scissors } from "lucide-react";
 import Navbar from "@/components/Navbar";
 
 export default function SplitPDFPage() {
+  const [pageSelection, setPageSelection] = useState("all");
+  const [customRange, setCustomRange] = useState("");
   const [resultFiles, setResultFiles] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
 
@@ -21,6 +23,7 @@ export default function SplitPDFPage() {
 
     const formData = new FormData();
     formData.append("file", files[0].file);
+    formData.append("range", pageSelection === "all" ? "all" : customRange);
 
     try {
       const res = await fetch("/api/pdf/split", {
@@ -98,6 +101,59 @@ export default function SplitPDFPage() {
                 buttonLabel="Split PDF"
                 getFormatsForFile={() => []}
               />
+
+              <div className="max-w-xl mx-auto mt-6">
+                <div
+                  className="
+      bg-white/70 
+      backdrop-blur-xl 
+      border border-white/50 
+      shadow-lg 
+      rounded-2xl 
+      p-6 
+      transition-all
+    "
+                >
+                  <h4 className="text-gray-800 font-semibold mb-3">
+                    Choose pages to split:
+                  </h4>
+
+                  {/* Select */}
+                  <div className="relative mb-4">
+                    <select
+                      className="w-full rounded-lg border border-gray-200 bg-white/60 backdrop-blur-sm px-3 py-2.5 text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300/60 focus:border-blue-400 transition-all duration-200"
+                      value={pageSelection}
+                      onChange={(e) => setPageSelection(e.target.value)}
+                    >
+                      <option value="all">All pages</option>
+                      <option value="single">Single Page</option>
+                      <option value="range">Page Range</option>
+                      <option value="custom">
+                        Custom Selection (e.g., 1,3,6–8)
+                      </option>
+                    </select>
+                  </div>
+
+                  {/* Input */}
+                  {pageSelection !== "all" && (
+                    <div className="relative">
+                      <input
+                        type="text"
+                        placeholder={
+                          pageSelection === "single"
+                            ? "e.g., 4"
+                            : pageSelection === "range"
+                            ? "e.g., 3-7"
+                            : "e.g., 1, 4, 6-9"
+                        }
+                        className="w-full rounded-lg border border-gray-200 bg-white/60 backdrop-blur-sm px-3 py-2.5 text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-300/60 focus:border-blue-400 transition-all duration-200"
+                        value={customRange}
+                        onChange={(e) => setCustomRange(e.target.value)}
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
 
               {error && (
                 <p className="text-red-500 font-medium mt-4 text-center">
