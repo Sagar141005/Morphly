@@ -32,7 +32,7 @@ const plans = [
       "No AI tools access in this plan",
       "5 credits/day (renews every 24h)",
       "Max file size: 10MB",
-      "No storage — instant download only",
+      "No cloud storage — instant download only",
       "Basic conversion logs (no cloud history)",
     ],
     cta: "Get started for free",
@@ -53,6 +53,7 @@ const plans = [
       "AI tools included",
       "Faster conversion & priority queue",
       "Max file size: 100MB",
+      "5GB cloud storage",
       "30-day cloud history",
       "Email support",
     ],
@@ -74,7 +75,8 @@ const plans = [
       "Unlimited basic conversions",
       "100 AI credits/month",
       "Max file size: 500MB",
-      "Cloud storage with 90-day retention",
+      "50GB cloud storage",
+      "90-day cloud history",
       "Team sharing & advanced analytics",
       "Priority support & early access to new tools",
     ],
@@ -119,19 +121,19 @@ export default function Pricing() {
             }
           }}
         >
-          <TabsList className="bg-white rounded-full p-1 shadow-sm">
+          <TabsList className="bg-white dark:bg-neutral-800 rounded-full p-1 shadow-sm dark:shadow-neutral-700">
             <TabsTrigger
               value="monthly"
-              className="data-[state=active]:bg-blue-600 data-[state=active]:text-white rounded-full px-4 py-1 transition"
+              className="data-[state=active]:bg-blue-600 data-[state=active]:text-white rounded-full px-4 py-1 transition dark:data-[state=active]:bg-blue-500"
             >
               Monthly
             </TabsTrigger>
             <TabsTrigger
               value="yearly"
-              className="data-[state=active]:bg-blue-600 data-[state=active]:text-white rounded-full px-4 py-1 transition flex items-center"
+              className="data-[state=active]:bg-blue-600 data-[state=active]:text-white rounded-full px-4 py-1 transition flex items-center dark:data-[state=active]:bg-blue-500"
             >
               Yearly
-              <Badge className="ml-2 bg-blue-100 text-blue-800 text-xs">
+              <Badge className="ml-2 bg-blue-100 text-blue-800 text-xs dark:bg-blue-800 dark:text-blue-200">
                 20% off
               </Badge>
             </TabsTrigger>
@@ -139,32 +141,32 @@ export default function Pricing() {
         </Tabs>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {plans.map((plan) => (
           <Card
             key={plan.id}
             className={cn(
-              "flex flex-col justify-between rounded-xl shadow-lg border border-transparent hover:shadow-xl transition",
+              "flex flex-col justify-between rounded-xl shadow-lg border border-transparent transition transform hover:scale-102 hover:shadow-xl dark:hover:shadow-neutral-700",
               plan.popular
-                ? "ring-2 ring-blue-500"
-                : "bg-white  hover:scale-102 hover:ring-2 hover:ring-blue-200"
+                ? "ring-2 ring-blue-500 dark:ring-blue-400"
+                : "bg-white dark:bg-neutral-900 hover:ring-2 hover:ring-blue-200 dark:hover:ring-blue-300"
             )}
           >
             <CardHeader className="mb-4">
               <div className="flex items-center gap-3 mb-2">
-                <div className="bg-blue-50 p-2 rounded-full">
-                  <plan.icon className="h-5 w-5 text-blue-600" />
+                <div className="bg-blue-50 dark:bg-blue-800 p-2 rounded-full">
+                  <plan.icon className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                 </div>
-                <CardTitle className="text-xl font-bold text-gray-900">
+                <CardTitle className="text-xl font-bold text-neutral-900 dark:text-neutral-100">
                   {plan.name}
                 </CardTitle>
               </div>
-              <CardDescription className="text-gray-600">
+              <CardDescription className="text-neutral-600 dark:text-neutral-300">
                 {plan.description}
               </CardDescription>
               <div className="mt-4">
                 {typeof plan.price[frequency] === "number" ? (
-                  <div className="text-2xl font-bold text-gray-900 flex items-baseline justify-center">
+                  <div className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 flex items-baseline justify-center">
                     <NumberFlow
                       value={plan.price[frequency] as number}
                       format={{
@@ -173,10 +175,12 @@ export default function Pricing() {
                         maximumFractionDigits: 2,
                       }}
                     />
-                    <span className="text-sm text-gray-500 ml-1">/month</span>
+                    <span className="text-sm text-neutral-500 dark:text-neutral-400 ml-1">
+                      /month
+                    </span>
                   </div>
                 ) : (
-                  <div className="text-2xl font-bold text-gray-900 text-center">
+                  <div className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 text-center">
                     {plan.price[frequency]}
                   </div>
                 )}
@@ -184,15 +188,13 @@ export default function Pricing() {
             </CardHeader>
 
             <CardContent>
-              <ul className="space-y-2 text-gray-700">
+              <ul className="space-y-2 text-neutral-700 dark:text-neutral-300">
                 {plan.features.map((feature, i) => (
                   <li key={i} className="flex items-start gap-2">
                     <div className="flex-shrink-0 mt-1">
-                      <Check className="h-4 w-4 text-green-600" />
+                      <Check className="h-4 w-4 text-green-600 dark:text-green-400" />
                     </div>
-                    <span className="text-gray-700 leading-snug">
-                      {feature}
-                    </span>
+                    <span className="leading-snug">{feature}</span>
                   </li>
                 ))}
               </ul>
@@ -204,8 +206,8 @@ export default function Pricing() {
                 className={cn(
                   "w-full mt-4",
                   plan.popular
-                    ? "bg-blue-600 hover:bg-blue-700 text-white"
-                    : "bg-white border border-gray-300 text-gray-800 hover:bg-blue-50"
+                    ? "bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white"
+                    : "bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 text-neutral-800 dark:text-neutral-200 hover:bg-blue-50 dark:hover:bg-neutral-700"
                 )}
               >
                 {plan.cta}

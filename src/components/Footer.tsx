@@ -3,10 +3,9 @@ import Link from "next/link";
 
 const Footer: React.FC = () => {
   return (
-    <footer className="bg-gradient-to-b from-gray-50 to-white border-t border-gray-200 text-sm text-gray-600">
+    <footer className="bg-gradient-to-b from-neutral-50 to-white dark:from-neutral-900 dark:to-neutral-800 border-t border-neutral-200 dark:border-neutral-700 text-sm text-neutral-600 dark:text-neutral-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-          {/* Branding */}
           <div>
             <Link
               href="/"
@@ -15,50 +14,50 @@ const Footer: React.FC = () => {
               <img src="/M.png" alt="Morphly Logo" className="h-6 w-6 mb-1" />
               orphly
             </Link>
-            <p className="text-xs text-gray-400 font-medium">
+            <p className="text-xs text-neutral-400 dark:text-neutral-500 font-medium">
               Smart conversions. Limitless possibilities.
             </p>
 
-            <p className="mt-4 text-gray-500 leading-relaxed max-w-xs">
+            <p className="mt-4 text-neutral-500 dark:text-neutral-400 leading-relaxed max-w-xs">
               Morphly helps you build smarter, faster, and more powerful digital
               products with beautiful UI and robust tools.
             </p>
 
-            {/* Socials */}
-            <div className="flex space-x-4 mt-5 text-gray-400">
+            <div className="flex space-x-4 mt-5 text-neutral-400 dark:text-neutral-500">
               <Link
                 href="https://github.com/morphly"
                 aria-label="GitHub"
-                className="hover:text-black transition-colors"
+                className="hover:text-black dark:hover:text-white transition-colors"
               >
                 <Github className="h-5 w-5" />
               </Link>
               <Link
                 href="https://linkedin.com/company/morphly"
                 aria-label="LinkedIn"
-                className="hover:text-blue-600 transition-colors"
+                className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
               >
                 <Linkedin className="h-5 w-5" />
               </Link>
               <Link
                 href="https://twitter.com/morphly"
-                aria-label="LinkedIn"
-                className="hover:text-blue-400 transition-colors"
+                aria-label="Twitter"
+                className="hover:text-blue-400 dark:hover:text-blue-300 transition-colors"
               >
                 <Twitter className="h-5 w-5" />
               </Link>
             </div>
           </div>
 
-          {/* Navigation Links */}
           <div className="flex flex-col sm:flex-row sm:justify-between lg:justify-start lg:gap-16">
             <div>
-              <h3 className="text-gray-800 font-semibold mb-2">Product</h3>
+              <h3 className="text-neutral-800 dark:text-neutral-200 font-semibold mb-2">
+                Product
+              </h3>
               <ul className="space-y-2">
                 <li>
                   <Link
                     href="/image/convert"
-                    className="hover:text-blue-600 transition-colors"
+                    className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                   >
                     Image Convert
                   </Link>
@@ -66,7 +65,7 @@ const Footer: React.FC = () => {
                 <li>
                   <Link
                     href="/image/removebg"
-                    className="hover:text-blue-600 transition-colors"
+                    className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                   >
                     AI BG Removal
                   </Link>
@@ -74,7 +73,7 @@ const Footer: React.FC = () => {
                 <li>
                   <Link
                     href="/file/convert"
-                    className="hover:text-blue-600 transition-colors"
+                    className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                   >
                     File Convert
                   </Link>
@@ -82,7 +81,7 @@ const Footer: React.FC = () => {
                 <li>
                   <Link
                     href="/file/merge"
-                    className="hover:text-blue-600 transition-colors"
+                    className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                   >
                     File Merge
                   </Link>
@@ -90,7 +89,7 @@ const Footer: React.FC = () => {
                 <li>
                   <Link
                     href="/file/split"
-                    className="hover:text-blue-600 transition-colors"
+                    className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                   >
                     File Split
                   </Link>
@@ -99,12 +98,14 @@ const Footer: React.FC = () => {
             </div>
 
             <div className="mt-6 sm:mt-0">
-              <h3 className="text-gray-800 font-semibold mb-2">Company</h3>
+              <h3 className="text-neutral-800 dark:text-neutral-200 font-semibold mb-2">
+                Company
+              </h3>
               <ul className="space-y-2">
                 <li>
                   <Link
                     href="/about"
-                    className="hover:text-blue-600 transition-colors"
+                    className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                   >
                     About Us
                   </Link>
@@ -112,7 +113,7 @@ const Footer: React.FC = () => {
                 <li>
                   <Link
                     href="/contact"
-                    className="hover:text-blue-600 transition-colors"
+                    className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                   >
                     Contact
                   </Link>
@@ -120,7 +121,7 @@ const Footer: React.FC = () => {
                 <li>
                   <Link
                     href="/privacy"
-                    className="hover:text-blue-600 transition-colors"
+                    className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                   >
                     Privacy Policy
                   </Link>
@@ -129,21 +130,22 @@ const Footer: React.FC = () => {
             </div>
           </div>
 
-          {/* CTA / Newsletter / Contact */}
           <div>
-            <h3 className="text-gray-800 font-semibold mb-2">Stay Updated</h3>
-            <p className="text-gray-500 mb-4 max-w-sm">
+            <h3 className="text-neutral-800 dark:text-neutral-200 font-semibold mb-2">
+              Stay Updated
+            </h3>
+            <p className="text-neutral-500 dark:text-neutral-400 mb-4 max-w-sm">
               Join our mailing list for updates, tutorials, and more.
             </p>
             <form className="flex flex-col sm:flex-row gap-3">
               <input
                 type="email"
                 placeholder="you@example.com"
-                className="w-full px-4 py-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm"
+                className="w-full px-4 py-2 rounded-xl border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-700 text-neutral-900 dark:text-neutral-200 focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm"
               />
               <button
                 type="submit"
-                className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium transition-shadow shadow-sm hover:shadow-md"
+                className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white rounded-md font-medium transition-shadow shadow-sm hover:shadow-md"
               >
                 Subscribe
               </button>
@@ -151,18 +153,22 @@ const Footer: React.FC = () => {
           </div>
         </div>
 
-        {/* Divider */}
-        <hr className="mt-12 border-gray-200" />
+        <hr className="mt-12 border-neutral-200 dark:border-neutral-700" />
 
-        {/* Bottom Bar */}
-        <div className="mt-6 flex flex-col sm:flex-row justify-between items-center text-xs text-gray-400">
+        <div className="mt-6 flex flex-col sm:flex-row justify-between items-center text-xs text-neutral-400 dark:text-neutral-500">
           <p>© {new Date().getFullYear()} Morphly. All rights reserved.</p>
           <div className="flex space-x-4 mt-2 sm:mt-0">
-            <Link href="/terms" className="hover:text-blue-600">
+            <Link
+              href="/terms"
+              className="hover:text-blue-600 dark:hover:text-blue-400"
+            >
               Terms & Conditions
             </Link>
             <span>·</span>
-            <Link href="/privacy" className="hover:text-blue-600">
+            <Link
+              href="/privacy"
+              className="hover:text-blue-600 dark:hover:text-blue-400"
+            >
               Privacy Policy
             </Link>
           </div>
