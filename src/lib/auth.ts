@@ -3,7 +3,7 @@ import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 function CustomPrismaAdapter(prismaInstance: typeof prisma) {
   const originalAdapter = PrismaAdapter(prismaInstance);
@@ -13,7 +13,6 @@ function CustomPrismaAdapter(prismaInstance: typeof prisma) {
     createUser: async (data: any) => {
       const newData = { ...data };
 
-      // Replace `image` with `profilePic` to match your schema
       if ("image" in newData) {
         newData.profilePic = newData.image;
         delete newData.image;
