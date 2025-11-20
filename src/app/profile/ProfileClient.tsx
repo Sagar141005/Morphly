@@ -16,6 +16,7 @@ import {
 import PlanCard from "@/components/dashboard/PlanCard";
 import FilesTable from "@/components/dashboard/FilesTable";
 import { useSession } from "next-auth/react";
+import ConfirmModal from "@/components/ConfirmModal";
 
 interface UserFile {
   id: string;
@@ -43,6 +44,8 @@ export default function ProfileClient({ user }: { user: User }) {
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(user.name || "");
   const [profilePicFile, setProfilePicFile] = useState<File | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [fileToDelete, setFileToDelete] = useState<string | null>(null);
 
   const { data: session, update } = useSession();
 
@@ -74,19 +77,28 @@ export default function ProfileClient({ user }: { user: User }) {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    const confirmDelete = confirm("Are you sure you want to delete this file?");
-    if (!confirmDelete) return;
+  const handleDeleteClick = (id: string) => {
+    setFileToDelete(id);
+    setModalOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!fileToDelete) return;
 
     try {
-      const response = await fetch(`/api/files/${id}`, { method: "DELETE" });
+      const response = await fetch(`/api/files/${fileToDelete}`, {
+        method: "DELETE",
+      });
       if (!response.ok) throw new Error("Failed to delete file");
 
-      setAllFiles((prev) => prev.filter((f) => f.id !== id));
-      setFiles((prev) => prev.filter((f) => f.id !== id));
+      setAllFiles((prev) => prev.filter((f) => f.id !== fileToDelete));
+      setFiles((prev) => prev.filter((f) => f.id !== fileToDelete));
     } catch (err) {
       console.error(err);
       alert("Failed to delete file");
+    } finally {
+      setModalOpen(false);
+      setFileToDelete(null);
     }
   };
 
@@ -301,7 +313,7 @@ export default function ProfileClient({ user }: { user: User }) {
             files={files}
             visibleCount={10}
             showLoadMore={false}
-            onDelete={handleDelete}
+            onDelete={handleDeleteClick}
           />
         )}
       </motion.section>
@@ -336,6 +348,12 @@ export default function ProfileClient({ user }: { user: User }) {
           </div>
         </motion.section>
       )}
+      <ConfirmModal
+        isOpen={modalOpen}
+        message="Are you sure you want to delete this file? This action cannot be undone."
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setModalOpen(false)}
+      />
     </>
   );
 }

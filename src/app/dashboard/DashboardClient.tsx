@@ -7,6 +7,7 @@ import StorageCard from "@/components/dashboard/StorageCard";
 import PlanCard from "@/components/dashboard/PlanCard";
 import StatsCard from "@/components/dashboard/StatsCard";
 import FilesTable from "@/components/dashboard/FilesTable";
+import ConfirmModal from "@/components/ConfirmModal";
 
 interface FileType {
   id: string;
@@ -42,6 +43,8 @@ export default function DashboardClient({
   );
   const [visibleCount, setVisibleCount] = useState(20);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [fileToDelete, setFileToDelete] = useState<string | null>(null);
 
   const loadMoreFromDB = async () => {
     if (!cursor) return;
@@ -68,16 +71,23 @@ export default function DashboardClient({
     }
   };
 
-  const handleDelete = async (id: string) => {
-    const confirmDelete = confirm("Are you sure you want to delete this file?");
-    if (!confirmDelete) return;
+  const handleDeleteClick = (id: string) => {
+    setFileToDelete(id);
+    setModalOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!fileToDelete) return;
 
     try {
-      await fetch(`/api/files/${id}`, { method: "DELETE" });
-      setFiles((prev) => prev.filter((f) => f.id !== id));
+      await fetch(`/api/files/${fileToDelete}`, { method: "DELETE" });
+      setFiles((prev) => prev.filter((f) => f.id !== fileToDelete));
     } catch (err) {
       console.error(err);
       alert("Failed to delete file");
+    } finally {
+      setModalOpen(false);
+      setFileToDelete(null);
     }
   };
 
@@ -154,12 +164,18 @@ export default function DashboardClient({
               visibleCount={visibleCount}
               onLoadMore={handleShowMore}
               loadingMore={loadingMore}
-              onDelete={handleDelete}
+              onDelete={handleDeleteClick}
               showLoadMore={true}
             />
           )}
         </motion.section>
       </main>
+      <ConfirmModal
+        isOpen={modalOpen}
+        message="Are you sure you want to delete this file? This action cannot be undone."
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setModalOpen(false)}
+      />
     </div>
   );
 }
