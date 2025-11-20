@@ -60,6 +60,7 @@
     "@tailwindcss/postcss": "^4",
     "@types/bcrypt": "^6.0.0",
     "@types/formidable": "^3.4.6",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20",
     "@types/pdfkit": "^0.17.3",
     "@types/react": "^19",
