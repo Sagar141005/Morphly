@@ -8,24 +8,6 @@ import type { UploadFile } from "@/types/type";
 import { motion } from "framer-motion";
 import { Images } from "lucide-react";
 
-const getAvailableFormats = (type: string, name: string) => {
-  const lowerName = name.toLocaleLowerCase();
-
-  if (
-    type === "application/pdf" ||
-    [".pdf", ".docx", ".txt"].some((ext) => lowerName.endsWith(ext))
-  )
-    return ["PDF", "DOCX", "TXT"];
-
-  if (type.startsWith("image/") || /\.(png|jpg|jpeg|webp|gif)$/.test(lowerName))
-    return ["JPG", "PNG", "WEBP"];
-
-  if (type.startsWith("text/") || /\.(txt|csv|md|json)$/.test(lowerName))
-    return ["PDF", "TXT"];
-
-  return ["PDF", "TXT"];
-};
-
 export default function ImageConversionPage() {
   const handleConvert = async (files: UploadFile[]) => {
     for (const item of files) {
@@ -121,7 +103,7 @@ export default function ImageConversionPage() {
               <DragAndDropUploader
                 showFormatSelect
                 onSubmit={handleConvert}
-                getFormatsForFile={getAvailableFormats}
+                acceptedTypes={{ "image/*": [] }}
                 buttonLabel="Convert Files"
               />
 
