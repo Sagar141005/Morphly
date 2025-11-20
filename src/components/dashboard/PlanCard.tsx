@@ -1,5 +1,4 @@
-"use client";
-
+import React from "react";
 import { Star, Zap, FileDown } from "lucide-react";
 
 export default function PlanCard({ plan }: { plan: string }) {

@@ -1,5 +1,4 @@
-"use client";
-
+import React from "react";
 import {
   ChevronDown,
   Download,
@@ -8,7 +7,6 @@ import {
   FileText,
   Trash,
 } from "lucide-react";
-import { useState } from "react";
 
 function formatFileSize(size: number) {
   return size > 1024 * 1024
