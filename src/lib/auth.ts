@@ -3,7 +3,7 @@ import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
-import bcrypt from "bcryptjs";
+import bcrypt from "bcrypt";
 
 function CustomPrismaAdapter(prismaInstance: typeof prisma) {
   const originalAdapter = PrismaAdapter(prismaInstance);
@@ -61,22 +61,26 @@ export const authOptions: AuthOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
+      if (trigger === "update" && session?.user) {
+        token.profilePic = session.user.profilePic;
+        token.name = session.user.name;
+      }
+
       if (user) {
         token.id = user.id;
         token.email = user.email;
-        token.plan = (user as any).plan || "FREE";
-        token.profilePic = (user as any).profilePic || null;
+        token.plan = user.plan || "FREE";
+        token.profilePic = user.profilePic || null;
       }
+
       return token;
     },
     async session({ session, token }) {
-      if (session.user && token) {
-        session.user.id = token.id as string;
-        session.user.email = token.email as string;
-        session.user.plan = token.plan as string;
-        session.user.profilePic = token.profilePic as string | null;
-      }
+      session.user.id = token.id;
+      session.user.email = token.email;
+      session.user.plan = token.plan;
+      session.user.profilePic = token.profilePic;
       return session;
     },
   },
