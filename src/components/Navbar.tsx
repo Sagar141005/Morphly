@@ -1,16 +1,55 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ChevronDown, Menu, X } from "lucide-react";
+import { BadgeCent, ChevronDown, Menu, X } from "lucide-react";
 import { useSession } from "next-auth/react";
 import ModeToggle from "./ModeToggle";
 import Image from "next/image";
+import { UserCredits } from "@/lib/credits";
+import { motion } from "framer-motion";
+
+const DAILY_LIMITS = {
+  FREE: 5,
+  PLUS: 25,
+  PRO: 99999,
+};
+
+const MONTHLY_AI_LIMITS = {
+  FREE: 0,
+  PLUS: 10,
+  PRO: 100,
+};
 
 const Navbar: React.FC = () => {
   const { data: session, status } = useSession();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [credits, setCredits] = useState<UserCredits | null>(null);
+
   const userIsLoggedIn = !!session?.user;
+
+  useEffect(() => {
+    async function fetchCredits() {
+      if (!session?.user?.id) return;
+
+      try {
+        const res = await fetch(`/api/credits?userId=${session.user.id}`);
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.error || "Failed to fetch credits");
+
+        setCredits({
+          basicCredits: data.basicCredits,
+          aiCredits: data.aiCredits,
+          plan: data.plan,
+        });
+      } catch (err) {
+        console.error("Failed to fetch credits:", err);
+      }
+    }
+
+    fetchCredits();
+  }, [session]);
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-black/80 backdrop-blur-xl border-b border-neutral-200 dark:border-neutral-800 shadow-sm">
@@ -86,7 +125,39 @@ const Navbar: React.FC = () => {
           </div>
 
           <div className="hidden sm:flex items-center gap-2">
-            <ModeToggle />
+            <div className="flex items-center gap-3">
+              <ModeToggle />
+              {credits && (
+                <div className="flex gap-2">
+                  <motion.div
+                    className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-yellow-100 dark:bg-yellow-600 text-neutral-600 dark:text-white shadow-sm"
+                    initial={{ scale: 1 }}
+                    whileHover={{ scale: 1.02 }}
+                    transition={{ duration: 0.4, ease: "easeInOut" }}
+                  >
+                    <HoverText
+                      label="Basic"
+                      current={credits.basicCredits}
+                      total={DAILY_LIMITS[credits.plan]}
+                    />
+                  </motion.div>
+
+                  <motion.div
+                    className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-blue-100 dark:bg-blue-600 text-neutral-600 dark:text-white shadow-sm"
+                    initial={{ scale: 1 }}
+                    whileHover={{ scale: 1.02 }}
+                    transition={{ duration: 0.4, ease: "easeInOut" }}
+                  >
+                    <HoverText
+                      label="AI"
+                      current={credits.aiCredits}
+                      total={MONTHLY_AI_LIMITS[credits.plan]}
+                    />
+                  </motion.div>
+                </div>
+              )}
+            </div>
+
             <div className="flex items-center gap-4">
               {userIsLoggedIn ? (
                 <div className="relative group">
@@ -280,3 +351,30 @@ const Navbar: React.FC = () => {
 };
 
 export default Navbar;
+
+const HoverText: React.FC<{
+  label: string;
+  current: number;
+  total: number;
+}> = ({ label, current, total }) => {
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <span
+      className="flex items-center gap-1"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <motion.span
+        key={hovered ? "total" : "current"}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.1, ease: "easeInOut" }}
+        className="inline-block text-sm"
+      >
+        {hovered ? `${label}: ${current} / ${total}` : current}
+      </motion.span>
+    </span>
+  );
+};
