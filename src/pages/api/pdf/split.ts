@@ -69,6 +69,15 @@ export default async function handler(
     return res.status(404).json({ error: "User not found" });
   }
 
+  if (user.basicCredits <= 0) {
+    return res.status(403).json({ error: "No credits left" });
+  }
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { basicCredits: user.basicCredits - 1 },
+  });
+
   const pages = originalPDF.getPages();
   const totalPages = pages.length;
 

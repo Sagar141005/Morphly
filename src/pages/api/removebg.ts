@@ -30,11 +30,22 @@ export default async function handler(
     where: { email: session.user.email },
   });
 
-  if (!user || user.plan !== "PRO") {
+  if (!user || (user.plan !== "PLUS" && user.plan !== "PRO")) {
     return res
       .status(403)
-      .json({ error: "Background removal is available for Pro users only." });
+      .json({
+        error: "Background removal is available for Plus and Pro users only.",
+      });
   }
+
+  if (user.aiCredits <= 0) {
+    return res.status(403).json({ error: "No AI credits left" });
+  }
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { aiCredits: { decrement: 1 } },
+  });
 
   const form = formidable({ multiples: false });
   const data = await new Promise<{
