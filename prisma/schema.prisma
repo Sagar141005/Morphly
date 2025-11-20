@@ -28,6 +28,10 @@ model User {
 
   Account Account[]
   Session Session[]
+
+  basicCredits    Int @default(5)
+  aiCredits       Int @default(0)
+  creditsResetAt  DateTime?  
 }
 
 model File {
