@@ -5,6 +5,7 @@ interface ConfirmModalProps {
   onConfirm: () => void;
   onCancel: () => void;
   message: string;
+  action: string;
 }
 
 export default function ConfirmModal({
@@ -12,6 +13,7 @@ export default function ConfirmModal({
   onConfirm,
   onCancel,
   message,
+  action,
 }: ConfirmModalProps) {
   if (!isOpen) return null;
 
@@ -22,15 +24,15 @@ export default function ConfirmModal({
         <div className="flex justify-center gap-4">
           <button
             onClick={onCancel}
-            className="px-4 py-2 bg-neutral-200 dark:bg-neutral-700 rounded-md hover:bg-neutral-300 dark:hover:bg-neutral-600"
+            className="px-4 py-2 bg-neutral-200 dark:bg-neutral-700 rounded-md hover:bg-neutral-300 dark:hover:bg-neutral-600 cursor-pointer"
           >
             Cancel
           </button>
           <button
             onClick={onConfirm}
-            className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+            className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 cursor-pointer"
           >
-            Delete
+            {action}
           </button>
         </div>
       </div>

@@ -353,6 +353,7 @@ export default function ProfileClient({ user }: { user: User }) {
         message="Are you sure you want to delete this file? This action cannot be undone."
         onConfirm={handleConfirmDelete}
         onCancel={() => setModalOpen(false)}
+        action="Delete"
       />
     </>
   );
