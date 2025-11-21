@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { prisma } from "@/lib/prisma";
+import { resetUserCredits } from "@/lib/credits";
 
 export default async function handler(
   req: NextApiRequest,
@@ -11,24 +11,17 @@ export default async function handler(
     if (!userId) {
       return res.status(400).json({ error: "Missing userId" });
     }
+    const updatedUser = await resetUserCredits(userId);
 
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: {
-        basicCredits: true,
-        aiCredits: true,
-        plan: true,
-      },
-    });
-
-    if (!user) {
+    if (!updatedUser) {
       return res.status(404).json({ error: "User not found" });
     }
 
-    res.status(200).json({
-      basicCredits: user.basicCredits,
-      aiCredits: user.aiCredits,
-      plan: user.plan,
+    return res.status(200).json({
+      basicCredits: updatedUser.basicCredits,
+      aiCredits: updatedUser.aiCredits,
+      plan: updatedUser.plan,
+      creditsResetAt: updatedUser.creditsResetAt,
     });
   } catch (error) {
     console.error(error);
