@@ -28,7 +28,7 @@ const plans = [
     description:
       "Get started with essential tools and daily free credits — perfect for quick conversions.",
     features: [
-      "Includes core tools: convert, compress, merge, split",
+      "Includes core tools",
       "No AI tools access in this plan",
       "5 credits/day (renews every 24h)",
       "Max file size: 10MB",
@@ -55,7 +55,6 @@ const plans = [
       "Max file size: 100MB",
       "5GB cloud storage",
       "30-day cloud history",
-      "Email support",
     ],
     cta: "Upgrade to Plus",
     popular: true,
@@ -77,8 +76,8 @@ const plans = [
       "Max file size: 500MB",
       "50GB cloud storage",
       "90-day cloud history",
-      "Team sharing & advanced analytics",
-      "Priority support & early access to new tools",
+      "Priority support",
+      "Early access to new tools",
     ],
     cta: "Subscribe to Pro",
   },
