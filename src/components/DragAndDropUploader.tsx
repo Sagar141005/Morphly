@@ -5,6 +5,7 @@ import { useDropzone } from "react-dropzone";
 import { FileIcon, FileText, FileImage, X } from "lucide-react";
 import type { UploadFile } from "@/types/type";
 import { usePathname, useRouter } from "next/navigation";
+import { useUserStore } from "@/stores/userStore";
 
 interface DragAndDropUploaderProps {
   showFormatSelect?: boolean;
@@ -41,6 +42,12 @@ const getIconForFile = (type: string) => {
   );
 };
 
+const planFileLimits: Record<string, number> = {
+  free: 10 * 1024 * 1024,
+  plus: 100 * 1024 * 1024,
+  pro: 500 * 1024 * 1024,
+};
+
 export default function DragAndDropUploader({
   showFormatSelect = false,
   onSubmit,
@@ -56,16 +63,38 @@ export default function DragAndDropUploader({
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
+  const userPlan = useUserStore((state) => state.plan);
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
       if (!acceptedFiles || acceptedFiles.length === 0) return;
 
-      const newFiles: UploadFile[] = acceptedFiles.map((file) => ({
-        file,
-        format: getFormatsForFile(file.type, file.name)[0] ?? "",
-      }));
-      setFiles((prev) => [...prev, ...newFiles]);
+      const maxSize = planFileLimits[userPlan];
+      const filteredFiles: UploadFile[] = [];
+      const rejectedFiles: string[] = [];
+
+      acceptedFiles.forEach((file) => {
+        if (file.size <= maxSize) {
+          filteredFiles.push({
+            file,
+            format: getFormatsForFile(file.type, file.name)[0] ?? "",
+          });
+        } else {
+          rejectedFiles.push(file.name);
+        }
+      });
+
+      if (rejectedFiles.length > 0) {
+        alert(
+          `These files exceed your plan's maximum size of ${
+            maxSize / 1024 / 1024
+          } MB:\n${rejectedFiles.join(", ")}`
+        );
+      }
+
+      if (filteredFiles.length === 0) return;
+
+      setFiles((prev) => [...prev, ...filteredFiles]);
 
       if (pathname === "/") {
         const file = acceptedFiles[0];
@@ -78,7 +107,7 @@ export default function DragAndDropUploader({
         }
       }
     },
-    [getFormatsForFile, router, pathname]
+    [getFormatsForFile, router, pathname, userPlan]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
