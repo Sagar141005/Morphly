@@ -8,15 +8,14 @@ import Footer from "@/components/Footer";
 import ConversionOverview from "@/components/ConversionOverview";
 import { Download, FileText } from "lucide-react";
 import Navbar from "@/components/Navbar";
+import toast from "react-hot-toast";
 
 const getFileFormats = () => ["PDF", "DOCX", "TXT"];
 
 export default function MergePDFPage() {
   const [resultURL, setResultURL] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
 
   const handleConvert = async (files: UploadFile[]) => {
-    setError(null);
     setResultURL(null);
 
     if (files.length === 0) return;
@@ -50,13 +49,13 @@ export default function MergePDFPage() {
         }
 
         const data = await res.json();
-        throw new Error(data.error || "Conversion failed");
+        toast.error(data.error || "Failed to convert file");
       }
 
       const data = await res.json();
       setResultURL(data.url);
     } catch (err: any) {
-      setError(err.message);
+      toast.error(err.message || "Conversion failed");
     }
   };
 
@@ -124,12 +123,6 @@ export default function MergePDFPage() {
                   "text/plain": [],
                 }}
               />
-
-              {error && (
-                <p className="text-red-500 dark:text-red-400 font-medium mt-4 text-center">
-                  {error}
-                </p>
-              )}
               {resultURL && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}

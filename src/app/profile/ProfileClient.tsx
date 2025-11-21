@@ -18,6 +18,7 @@ import FilesTable from "@/components/dashboard/FilesTable";
 import ConfirmModal from "@/components/ConfirmModal";
 import { useUserStore } from "@/stores/userStore";
 import Loader from "@/components/Loader";
+import toast from "react-hot-toast";
 
 interface UserFile {
   id: string;
@@ -65,7 +66,10 @@ export default function ProfileClient({ user }: { user: User }) {
         body: formData,
       });
 
-      if (!response.ok) throw new Error("Failed to save changes");
+      if (!response.ok) {
+        toast.error("Failed to save changes");
+        return;
+      }
 
       const updatedUser = await response.json();
       setUser({
@@ -76,10 +80,11 @@ export default function ProfileClient({ user }: { user: User }) {
 
       setEditing(false);
       setProfilePicFile(null);
+      toast.success("Profile updated successfully!");
       window.location.reload();
     } catch (err) {
       console.error(err);
-      alert("Failed to save changes. Please try again.");
+      toast.error("Failed to save changes. Please try again.");
     } finally {
       setSaving(false);
     }
@@ -97,12 +102,16 @@ export default function ProfileClient({ user }: { user: User }) {
       const response = await fetch(`/api/files/${fileToDelete}`, {
         method: "DELETE",
       });
-      if (!response.ok) throw new Error("Failed to delete file");
+      if (!response.ok) {
+        toast.error("Failed to delete file");
+        return;
+      }
 
       setAllFiles((prev) => prev.filter((f) => f.id !== fileToDelete));
+      toast.success("File deleted successfully!");
     } catch (err) {
       console.error(err);
-      alert("Failed to delete file");
+      toast.error("Failed to delete file");
     } finally {
       setModalOpen(false);
       setFileToDelete(null);

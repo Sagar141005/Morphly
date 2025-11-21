@@ -7,6 +7,7 @@ import Navbar from "@/components/Navbar";
 import type { UploadFile } from "@/types/type";
 import { motion } from "framer-motion";
 import { Images } from "lucide-react";
+import toast from "react-hot-toast";
 
 const getImageFormats = (type: string, name: string) => {
   return ["PNG", "JPG", "WEBP"];
@@ -29,7 +30,7 @@ export default function ImageConversionPage() {
 
         if (!res.ok) {
           const errorData = await res.json();
-          alert(`Error: ${errorData.error}`);
+          toast.error(`Error: ${errorData.error}`);
           continue;
         }
 
@@ -50,7 +51,7 @@ export default function ImageConversionPage() {
         }
       } catch (err) {
         console.error("Conversion failed:", err);
-        alert("Something went wrong.");
+        toast.error("Something went wrong.");
       }
     }
   };

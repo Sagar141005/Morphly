@@ -8,15 +8,14 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ConversionOverview from "@/components/ConversionOverview";
 import { Download, Brush } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function RemoveBGPage() {
   const [resultURL, setResultURL] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
 
   const handleRemoveBg = async (files: UploadFile[]) => {
     if (files.length === 0) return;
 
-    setError(null);
     setResultURL(null);
 
     const formData = new FormData();
@@ -30,13 +29,13 @@ export default function RemoveBGPage() {
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || "Failed to remove background");
+        toast.error(data.error || "Failed to remove background");
       }
 
       const data = await res.json();
       setResultURL(data.url);
     } catch (err: any) {
-      setError(err.message);
+      toast.error(err.message);
     }
   };
 
@@ -101,12 +100,6 @@ export default function RemoveBGPage() {
                 buttonLabel="Remove Background"
                 getFormatsForFile={() => []}
               />
-
-              {error && (
-                <p className="text-red-500 dark:text-red-400 font-medium mt-4">
-                  Error: {error}
-                </p>
-              )}
 
               {resultURL && (
                 <motion.div

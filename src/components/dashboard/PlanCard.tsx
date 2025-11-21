@@ -1,6 +1,7 @@
 import React from "react";
 import { Star, Zap, FileDown } from "lucide-react";
 import { useUserStore } from "@/stores/userStore";
+import Link from "next/link";
 
 export default function PlanCard() {
   const user = useUserStore((state) => state.user);
@@ -104,16 +105,12 @@ export default function PlanCard() {
               Active Subscription
             </span>
           ) : (
-            <button
+            <Link
+              href="/pricing"
               className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition-colors shadow-sm"
-              onClick={() =>
-                console.log(
-                  `Upgrade to ${normalized === "plus" ? "Pro" : "Plus"} clicked`
-                )
-              }
             >
               Upgrade to {normalized === "plus" ? "Pro" : "Plus"}
-            </button>
+            </Link>
           )}
         </div>
       </div>

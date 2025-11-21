@@ -4,6 +4,8 @@ import { SessionProvider, useSession } from "next-auth/react";
 import { useEffect } from "react";
 import { useUserStore } from "@/stores/userStore";
 import Loader from "@/components/Loader";
+import { useTheme } from "next-themes";
+import { Toaster } from "react-hot-toast";
 
 export default function ClientProviders({
   children,
@@ -12,7 +14,10 @@ export default function ClientProviders({
 }) {
   return (
     <SessionProvider>
-      <SessionHandler>{children}</SessionHandler>
+      <SessionHandler>
+        {children}
+        <CustomToaster />
+      </SessionHandler>
     </SessionProvider>
   );
 }
@@ -38,4 +43,22 @@ function SessionHandler({ children }: { children: React.ReactNode }) {
   if (status === "loading") return <Loader />;
 
   return <>{children}</>;
+}
+
+function CustomToaster() {
+  const { theme } = useTheme();
+
+  return (
+    <Toaster
+      position="top-center"
+      toastOptions={{
+        style: {
+          padding: "12px 16px",
+          borderRadius: "8px",
+          background: theme === "dark" ? "#111" : "#fff",
+          color: theme === "dark" ? "#fff" : "#111",
+        },
+      }}
+    />
+  );
 }

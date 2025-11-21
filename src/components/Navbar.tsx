@@ -9,6 +9,7 @@ import Image from "next/image";
 import ConfirmModal from "./ConfirmModal";
 import useSWR from "swr";
 import { useUserStore } from "@/stores/userStore";
+import toast from "react-hot-toast";
 
 type CreditResponse = {
   basicCredits: number;
@@ -56,9 +57,11 @@ const Navbar: React.FC = () => {
     }
   );
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     clearUser();
-    signOut({ callbackUrl: "/" });
+    toast.success("Logout successful");
+
+    await signOut({ callbackUrl: "/" });
   };
 
   return (

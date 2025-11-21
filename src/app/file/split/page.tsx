@@ -8,15 +8,14 @@ import Footer from "@/components/Footer";
 import ConversionOverview from "@/components/ConversionOverview";
 import { Scissors } from "lucide-react";
 import Navbar from "@/components/Navbar";
+import toast from "react-hot-toast";
 
 export default function SplitPDFPage() {
   const [pageSelection, setPageSelection] = useState("all");
   const [customRange, setCustomRange] = useState("");
   const [resultFiles, setResultFiles] = useState<string[]>([]);
-  const [error, setError] = useState<string | null>(null);
 
   const handleSplit = async (files: UploadFile[]) => {
-    setError(null);
     setResultFiles([]);
 
     if (files.length === 0) return;
@@ -43,7 +42,7 @@ export default function SplitPDFPage() {
         }
 
         const data = await res.json();
-        throw new Error(data.error || "Failed to split PDF");
+        toast.error(data.error || "Failed to split PDF");
       }
 
       const data = await res.json();
@@ -51,7 +50,7 @@ export default function SplitPDFPage() {
         setResultFiles(data.files);
       }
     } catch (err: any) {
-      setError(err.message || "Something went wrong");
+      toast.error(err.message || "Something went wrong");
     }
   };
 
@@ -177,12 +176,6 @@ export default function SplitPDFPage() {
                   )}
                 </div>
               </div>
-
-              {error && (
-                <p className="text-red-500 dark:text-red-400 font-medium mt-4 text-center">
-                  {error}
-                </p>
-              )}
 
               {resultFiles.length > 0 && (
                 <motion.div

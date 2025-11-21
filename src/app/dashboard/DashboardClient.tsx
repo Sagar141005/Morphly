@@ -10,6 +10,7 @@ import FilesTable from "@/components/dashboard/FilesTable";
 import ConfirmModal from "@/components/ConfirmModal";
 import { useUserStore } from "@/stores/userStore";
 import Loader from "@/components/Loader";
+import toast from "react-hot-toast";
 
 interface FileType {
   id: string;
@@ -57,7 +58,6 @@ export default function DashboardClient({
         });
         const data = await res.json();
         if (data.deleted > 0) {
-          console.log(`Deleted ${data.deleted} old files`);
           setFiles((prev) =>
             prev.filter((f) => !data.deletedFiles.includes(f.id))
           );
@@ -106,9 +106,10 @@ export default function DashboardClient({
     try {
       await fetch(`/api/files/${fileToDelete}`, { method: "DELETE" });
       setFiles((prev) => prev.filter((f) => f.id !== fileToDelete));
+      toast.success("File deleted successfully!");
     } catch (err) {
       console.error(err);
-      alert("Failed to delete file");
+      toast.error("Failed to delete file.");
     } finally {
       setModalOpen(false);
       setFileToDelete(null);

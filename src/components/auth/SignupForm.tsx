@@ -7,8 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
+import toast from "react-hot-toast";
+
 const signupSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters long"),
   email: z.string().email({ message: "Invalid email address" }),
@@ -30,15 +31,12 @@ export function SignupForm() {
     formState: { errors },
   } = useForm<SignupSchema>({ resolver: zodResolver(signupSchema) });
 
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const onSubmit = async (data: SignupSchema) => {
     setLoading(true);
-    setError(null);
 
-    const res = await fetch("/api/register", {
+    const res = await fetch("/api/auth/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
@@ -46,11 +44,12 @@ export function SignupForm() {
 
     if (!res.ok) {
       const err = await res.json();
-      setError(err.error || "Something went wrong");
+      toast.error(err.error || "Something went wrong");
       setLoading(false);
       return;
     }
 
+    toast.success("Account created! Redirecting…");
     await signIn("credentials", {
       email: data.email,
       password: data.password,
@@ -116,10 +115,6 @@ export function SignupForm() {
           <p className="mt-1 text-xs text-red-600">{errors.password.message}</p>
         )}
       </div>
-
-      {error && (
-        <p className="text-center text-sm text-red-700 font-medium">{error}</p>
-      )}
 
       <Button
         type="submit"

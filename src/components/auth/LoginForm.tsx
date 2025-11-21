@@ -9,6 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -34,11 +35,9 @@ export function LoginForm() {
 
   const router = useRouter();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const onSubmit = async (data: LoginSchema) => {
     setLoading(true);
-    setError(null);
 
     const res = await signIn("credentials", {
       email: data.email,
@@ -47,9 +46,10 @@ export function LoginForm() {
     });
 
     if (res?.ok) {
+      toast.success("Login successful! Redirecting…");
       router.push("/");
     } else {
-      setError("Invalid email or password");
+      toast.error("Invalid email or password");
     }
 
     setLoading(false);
@@ -98,12 +98,6 @@ export function LoginForm() {
           </p>
         )}
       </div>
-
-      {error && (
-        <p className="text-center text-sm text-red-700 dark:text-red-500 font-medium">
-          {error}
-        </p>
-      )}
 
       <div className="flex flex-col gap-4">
         <Button

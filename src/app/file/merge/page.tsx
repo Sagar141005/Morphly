@@ -8,17 +8,16 @@ import Footer from "@/components/Footer";
 import ConversionOverview from "@/components/ConversionOverview";
 import { Blend, Download } from "lucide-react";
 import Navbar from "@/components/Navbar";
+import toast from "react-hot-toast";
 
 export default function MergePDFPage() {
   const [resultURL, setResultURL] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
 
   const handleMerge = async (files: UploadFile[]) => {
-    setError(null);
     setResultURL(null);
 
     if (files.length < 2) {
-      setError("Please upload at least two PDF files to merge.");
+      toast.error("Please upload at least two PDF files to merge.");
       return;
     }
 
@@ -43,13 +42,13 @@ export default function MergePDFPage() {
         }
 
         const data = await res.json();
-        throw new Error(data.error || "Merge failed");
+        toast.error(data.error || "Failed to merge PDFs");
       }
 
       const data = await res.json();
       setResultURL(data.url);
     } catch (err: any) {
-      setError(err.message);
+      toast.error(err.message);
     }
   };
 
@@ -111,12 +110,6 @@ export default function MergePDFPage() {
                 buttonLabel="Merge PDFs"
                 getFormatsForFile={() => []}
               />
-
-              {error && (
-                <p className="text-red-500 dark:text-red-400 font-medium mt-4 text-center">
-                  {error}
-                </p>
-              )}
 
               {resultURL && (
                 <motion.div
