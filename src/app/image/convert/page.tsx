@@ -8,6 +8,10 @@ import type { UploadFile } from "@/types/type";
 import { motion } from "framer-motion";
 import { Images } from "lucide-react";
 
+const getImageFormats = (type: string, name: string) => {
+  return ["PNG", "JPG", "WEBP"];
+};
+
 export default function ImageConversionPage() {
   const handleConvert = async (files: UploadFile[]) => {
     for (const item of files) {
@@ -105,6 +109,7 @@ export default function ImageConversionPage() {
                 onSubmit={handleConvert}
                 acceptedTypes={{ "image/*": [] }}
                 buttonLabel="Convert Files"
+                getFormatsForFile={getImageFormats}
               />
 
               <ConversionOverview />
