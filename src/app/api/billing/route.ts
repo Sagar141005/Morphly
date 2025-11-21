@@ -4,11 +4,23 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import Stripe from "stripe";
 
+type PlanId = "plus" | "pro";
+type Frequency = "monthly" | "yearly";
+
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2022-11-15",
 });
 
-const STRIPE_PRO_PRICE_ID = process.env.STRIPE_PRO_PRICE_ID!;
+const STRIPE_PRICE_IDS: Record<PlanId, Record<Frequency, string>> = {
+  plus: {
+    monthly: process.env.STRIPE_PLUS_MONTHLY_PRICE_ID!,
+    yearly: process.env.STRIPE_PLUS_YEARLY_PRICE_ID!,
+  },
+  pro: {
+    monthly: process.env.STRIPE_PRO_MONTHLY_PRICE_ID!,
+    yearly: process.env.STRIPE_PRO_YEARLY_PRICE_ID!,
+  },
+};
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -26,14 +38,9 @@ export async function POST(req: NextRequest) {
   }
 
   let stripeCustomerId = user.stripeCustomerId;
-
   if (!stripeCustomerId) {
-    const customer = await stripe.customers.create({
-      email: user.email,
-    });
-
+    const customer = await stripe.customers.create({ email: user.email });
     stripeCustomerId = customer.id;
-
     await prisma.user.update({
       where: { id: user.id },
       data: { stripeCustomerId },
@@ -41,33 +48,24 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const session = await stripe.checkout.sessions.create({
+    const body: { planId: PlanId; frequency: Frequency } = await req.json();
+    const { planId, frequency } = body;
+
+    if (!STRIPE_PRICE_IDS[planId]?.[frequency]) {
+      return new NextResponse("Invalid plan or frequency", { status: 400 });
+    }
+
+    const checkoutSession = await stripe.checkout.sessions.create({
       mode: "subscription",
       payment_method_types: ["card"],
       customer: stripeCustomerId,
-      line_items: [
-        {
-          price: STRIPE_PRO_PRICE_ID,
-          quantity: 1,
-        },
-      ],
+      line_items: [{ price: STRIPE_PRICE_IDS[planId][frequency], quantity: 1 }],
       success_url: `${process.env.NEXTAUTH_URL}/dashboard?checkout=success`,
       cancel_url: `${process.env.NEXTAUTH_URL}/pricing?checkout=cancelled`,
-      metadata: {
-        userId: user.id,
-      },
+      metadata: { userId: user.id },
     });
 
-    console.log(
-      "Success URL:",
-      `${process.env.NEXTAUTH_URL}/dashboard?checkout=success`
-    );
-    console.log(
-      "Cancel URL:",
-      `${process.env.NEXTAUTH_URL}/pricing?checkout=cancelled`
-    );
-
-    return NextResponse.json({ url: session.url });
+    return NextResponse.json({ url: checkoutSession.url });
   } catch (error: any) {
     console.error("Stripe Checkout Error:", error.message);
     return NextResponse.json({ error: "Stripe error" }, { status: 500 });

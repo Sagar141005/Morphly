@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { prisma } from "@/lib/prisma";
 
+type Plan = "FREE" | "PLUS" | "PRO";
+
 export const config = {
   api: {
     bodyParser: false,
@@ -11,6 +13,13 @@ export const config = {
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2022-11-15",
 });
+
+const PRICE_ID_TO_PLAN: Record<string, string> = {
+  [process.env.STRIPE_PLUS_MONTHLY_PRICE_ID!]: "PLUS",
+  [process.env.STRIPE_PLUS_YEARLY_PRICE_ID!]: "PLUS",
+  [process.env.STRIPE_PRO_MONTHLY_PRICE_ID!]: "PRO",
+  [process.env.STRIPE_PRO_YEARLY_PRICE_ID!]: "PRO",
+};
 
 export async function POST(req: Request) {
   const sig = req.headers.get("stripe-signature") as string;
@@ -47,18 +56,44 @@ export async function POST(req: Request) {
           subscriptionId
         )) as Stripe.Subscription;
 
+        const priceId = subscription.items.data[0]?.price.id;
+        const plan: Plan = (PRICE_ID_TO_PLAN[priceId!] as Plan) || "FREE";
+
+        const frequency = subscription.items.data[0]?.price.recurring?.interval;
+
+        let basicCredits = 0;
+        let aiCredits = 0;
+
+        switch (plan) {
+          case "FREE":
+            basicCredits = 5;
+            aiCredits = 0;
+            break;
+          case "PLUS":
+            basicCredits = 25;
+            aiCredits = 10;
+            break;
+          case "PRO":
+            basicCredits = Infinity;
+            aiCredits = 100;
+            break;
+        }
+
         await prisma.user.update({
           where: { id: userId },
           data: {
-            plan: "PRO",
+            plan,
+            basicCredits,
+            aiCredits,
+            creditsResetAt: new Date(),
             stripeCustomerId: customerId,
             stripeSubscriptionId: subscription.id,
-            stripePriceId: subscription.items.data[0]?.price.id,
+            stripePriceId: priceId,
             currentPeriodEnd: new Date(subscription.current_period_end * 1000),
           },
         });
 
-        console.log(`✅ Upgraded user ${userId} to PRO`);
+        console.log(`✅ Upgraded user ${userId} to ${plan} (${frequency})`);
       } catch (err) {
         console.error("Failed to upgrade user", err);
         return new NextResponse("Internal Error", { status: 500 });
@@ -74,7 +109,12 @@ export async function POST(req: Request) {
       try {
         await prisma.user.updateMany({
           where: { stripeCustomerId: customerId },
-          data: { plan: "FREE" },
+          data: {
+            plan: "FREE",
+            basicCredits: 5,
+            aiCredits: 0,
+            creditsResetAt: new Date(),
+          },
         });
 
         console.log(`🔁 Downgraded user (customerId=${customerId}) to FREE`);
