@@ -93,12 +93,18 @@ export default function Pricing() {
 
   if (!mounted) return null;
 
-  const handleCheckout = async () => {
+  const handleCheckout = async (planId: string) => {
+    if (planId === "free") {
+      window.location.href = "/login";
+      return;
+    }
+
     const res = await fetch("/api/billing", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
+      body: JSON.stringify({ planId, frequency }),
     });
 
     const data = await res.json();
@@ -201,7 +207,7 @@ export default function Pricing() {
 
             <CardFooter>
               <Button
-                onClick={handleCheckout}
+                onClick={() => handleCheckout(plan.id)}
                 className={cn(
                   "w-full mt-4",
                   plan.popular
@@ -210,7 +216,7 @@ export default function Pricing() {
                 )}
               >
                 {plan.cta}
-                <ArrowRight className="ml-2 h-4 w-4" />
+                {plan.id !== "free" && <ArrowRight className="ml-2 h-4 w-4" />}
               </Button>
             </CardFooter>
           </Card>
