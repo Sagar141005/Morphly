@@ -11,6 +11,12 @@ import JSZip from "jszip";
 
 const readFile = promisify(fs.readFile);
 
+const planFileLimits: Record<string, number> = {
+  FREE: 10 * 1024 * 1024,
+  PLUS: 100 * 1024 * 1024,
+  PRO: 500 * 1024 * 1024,
+};
+
 export const config = {
   api: {
     bodyParser: false,
@@ -28,6 +34,14 @@ export default async function handler(
   const session = await getServerSession(req, res, authOptions);
   if (!session?.user.email) {
     return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email },
+  });
+
+  if (!user) {
+    return res.status(404).json({ error: "User not found" });
   }
 
   const form = formidable({ multiples: false });
@@ -58,16 +72,15 @@ export default async function handler(
     return res.status(400).json({ error: "Please upload a valid PDF file" });
   }
 
+  const maxSize = planFileLimits[user.plan] || planFileLimits.FREE;
+  if (file.size > maxSize) {
+    return res.status(400).json({
+      error: `File too large for your plan (${maxSize / 1024 / 1024} MB max)`,
+    });
+  }
+
   const buffer = await readFile(file.filepath);
   const originalPDF = await PDFDocument.load(buffer);
-
-  const user = await prisma.user.findUnique({
-    where: { email: session.user.email },
-  });
-
-  if (!user) {
-    return res.status(404).json({ error: "User not found" });
-  }
 
   if (user.basicCredits <= 0) {
     return res.status(403).json({ error: "No credits left" });

@@ -10,6 +10,12 @@ import { uploadToSupabase } from "@/lib/supabase";
 
 const readFile = promisify(fs.readFile);
 
+const planFileLimits: Record<string, number> = {
+  FREE: 10 * 1024 * 1024,
+  PLUS: 100 * 1024 * 1024,
+  PRO: 500 * 1024 * 1024,
+};
+
 export const config = {
   api: {
     bodyParser: false,
@@ -29,6 +35,14 @@ export default async function handler(
     return res.status(401).json({ error: "Unauthorized" });
   }
 
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email },
+  });
+
+  if (!user) {
+    return res.status(404).json({ error: "User not found" });
+  }
+
   const form = formidable({ multiples: false });
 
   const data = await new Promise<{
@@ -44,14 +58,24 @@ export default async function handler(
   const uploadedFile = data.files.file;
   const file = Array.isArray(uploadedFile) ? uploadedFile[0] : uploadedFile;
 
-  const rawFormat = data.fields.format as string | string[] | undefined;
+  if (!file) {
+    return res.status(400).json({ error: "No file uploaded" });
+  }
 
+  const maxSize = planFileLimits[user.plan] || planFileLimits.FREE;
+  if (file.size > maxSize) {
+    return res.status(400).json({
+      error: `File too large for your plan (${maxSize / 1024 / 1024} MB max)`,
+    });
+  }
+
+  const rawFormat = data.fields.format as string | string[] | undefined;
   const format = Array.isArray(rawFormat)
     ? rawFormat[0]?.toLowerCase()
     : rawFormat?.toLowerCase();
 
-  if (!file || !format) {
-    return res.status(400).json({ error: "Missing file or format" });
+  if (!format) {
+    return res.status(400).json({ error: "Missing file format" });
   }
 
   if (!file.mimetype?.startsWith("image/")) {
@@ -65,14 +89,6 @@ export default async function handler(
     convertedBuffer = await convertFile(buffer, format);
   } catch (err: any) {
     return res.status(500).json({ error: err.message || "Conversion error" });
-  }
-
-  const user = await prisma.user.findUnique({
-    where: { email: session.user.email },
-  });
-
-  if (!user) {
-    return res.status(404).json({ error: "User not found" });
   }
 
   if (user.basicCredits <= 0) {

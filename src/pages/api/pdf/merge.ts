@@ -10,6 +10,12 @@ import { PDFDocument } from "pdf-lib";
 
 const readFile = promisify(fs.readFile);
 
+const planFileLimits: Record<string, number> = {
+  FREE: 10 * 1024 * 1024,
+  PLUS: 100 * 1024 * 1024,
+  PRO: 500 * 1024 * 1024,
+};
+
 export const config = {
   api: {
     bodyParser: false,
@@ -27,6 +33,14 @@ export default async function handler(
   const session = await getServerSession(req, res, authOptions);
   if (!session?.user.email) {
     return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email },
+  });
+
+  if (!user) {
+    return res.status(404).json({ error: "User not found" });
   }
 
   const form = formidable({ multiples: false });
@@ -52,6 +66,15 @@ export default async function handler(
     if (!file.mimetype?.includes("pdf")) {
       return res.status(400).json({ error: "All files must be PDF" });
     }
+
+    const maxSize = planFileLimits[user.plan] || planFileLimits.FREE;
+    if (file.size > maxSize) {
+      return res.status(400).json({
+        error: `File "${file.originalFilename}" is too large for your plan (${
+          maxSize / 1024 / 1024
+        } MB max).`,
+      });
+    }
   }
 
   const buffers = await Promise.all(fileArray.map((f) => readFile(f.filepath)));
@@ -72,13 +95,6 @@ export default async function handler(
 
     const mergedBytes = await mergedPDF.save();
     const mergedBuffer = Buffer.from(mergedBytes);
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
-    });
-
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
 
     if (user.basicCredits <= 0) {
       return res.status(403).json({ error: "No credits left" });

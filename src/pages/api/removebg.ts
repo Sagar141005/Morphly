@@ -7,6 +7,12 @@ import cloudinary from "@/lib/cloudinary";
 import { prisma } from "@/lib/prisma";
 import { uploadToSupabase } from "@/lib/supabase";
 
+const planFileLimits: Record<string, number> = {
+  FREE: 10 * 1024 * 1024,
+  PLUS: 100 * 1024 * 1024,
+  PRO: 500 * 1024 * 1024,
+};
+
 export const config = {
   api: {
     bodyParser: false,
@@ -31,11 +37,9 @@ export default async function handler(
   });
 
   if (!user || (user.plan !== "PLUS" && user.plan !== "PRO")) {
-    return res
-      .status(403)
-      .json({
-        error: "Background removal is available for Plus and Pro users only.",
-      });
+    return res.status(403).json({
+      error: "Background removal is available for Plus and Pro users only.",
+    });
   }
 
   if (user.aiCredits <= 0) {
@@ -63,6 +67,13 @@ export default async function handler(
 
   if (!file) {
     return res.status(400).json({ error: "No file uploaded" });
+  }
+
+  const maxSize = planFileLimits[user.plan] || planFileLimits.FREE;
+  if (file.size > maxSize) {
+    return res.status(400).json({
+      error: `File too large for your plan (${maxSize / 1024 / 1024} MB max).`,
+    });
   }
 
   try {
