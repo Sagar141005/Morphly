@@ -3,6 +3,7 @@
 import { SessionProvider, useSession } from "next-auth/react";
 import { useEffect } from "react";
 import { useUserStore } from "@/stores/userStore";
+import Loader from "@/components/Loader";
 
 export default function ClientProviders({
   children,
@@ -17,18 +18,24 @@ export default function ClientProviders({
 }
 
 function SessionHandler({ children }: { children: React.ReactNode }) {
-  const { data: session } = useSession();
-  const setPlan = useUserStore((state) => state.setPlan);
+  const { data: session, status } = useSession();
+  const setUser = useUserStore((state) => state.setUser);
 
   useEffect(() => {
-    if (session?.user?.plan) {
-      const planLower = session.user.plan.toLowerCase() as
-        | "free"
-        | "plus"
-        | "pro";
-      setPlan(planLower);
+    if (session?.user) {
+      setUser({
+        id: session.user.id,
+        email: session.user.email,
+        name: session.user.name ?? undefined,
+        profilePic: session.user.profilePic ?? undefined,
+        plan: session.user.plan,
+        basicCredits: session.user.basicCredits,
+        aiCredits: session.user.aiCredits,
+      });
     }
-  }, [session, setPlan]);
+  }, [session, setUser]);
+
+  if (status === "loading") return <Loader />;
 
   return <>{children}</>;
 }

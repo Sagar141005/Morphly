@@ -6,8 +6,10 @@ declare module "next-auth" {
       id: string;
       email: string;
       name: string | null;
-      plan?: string;
+      plan: "FREE" | "PLUS" | "PRO";
       profilePic: string | null;
+      basicCredits: number;
+      aiCredits: number;
     } & DefaultSession["user"];
   }
 
@@ -15,8 +17,10 @@ declare module "next-auth" {
     id: string;
     email: string;
     name?: string | null;
-    plan?: string;
+    plan?: "FREE" | "PLUS" | "PRO";
     profilePic: string | null;
+    basicCredits?: number;
+    aiCredits?: number;
   }
 }
 
@@ -24,8 +28,10 @@ declare module "next-auth/jwt" {
   interface JWT {
     id: string;
     email: string;
-    plan?: string;
+    plan: "FREE" | "PLUS" | "PRO";
     profilePic: string | null;
     name?: string | null;
+    basicCredits: number;
+    aiCredits: number;
   }
 }
