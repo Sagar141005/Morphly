@@ -57,7 +57,7 @@ export default async function DashboardPage() {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-white via-blue-50/40 to-white">
       <Navbar />
-      <DashboardClient user={user} initialFiles={files} stats={stats} />
+      <DashboardClient initialFiles={files} stats={stats} />
       <Footer />
     </div>
   );

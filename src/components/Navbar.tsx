@@ -1,19 +1,25 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { ChevronDown, Menu, X } from "lucide-react";
-import { useSession, signOut } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import ModeToggle from "./ModeToggle";
 import Image from "next/image";
-import { UserCredits } from "@/lib/credits";
-import { motion } from "framer-motion";
 import ConfirmModal from "./ConfirmModal";
+import useSWR from "swr";
+import { useUserStore } from "@/stores/userStore";
+
+type CreditResponse = {
+  basicCredits: number;
+  aiCredits: number;
+  plan: "FREE" | "PLUS" | "PRO";
+};
 
 const DAILY_LIMITS = {
   FREE: 5,
   PLUS: 25,
-  PRO: 99999,
+  PRO: Number.MAX_SAFE_INTEGER,
 };
 
 const MONTHLY_AI_LIMITS = {
@@ -22,38 +28,36 @@ const MONTHLY_AI_LIMITS = {
   PRO: 100,
 };
 
+const formatBasicCredits = (credits: number, plan: "FREE" | "PLUS" | "PRO") => {
+  if (plan === "PRO") return "∞";
+  return `${credits} / ${DAILY_LIMITS[plan]}`;
+};
+
+const formatAiCredits = (credits: number, plan: "FREE" | "PLUS" | "PRO") => {
+  if (plan === "PRO") return `${credits} / 100`;
+  return `${credits} / ${MONTHLY_AI_LIMITS[plan]}`;
+};
+
+const fetcher = (url: string) => fetch(url).then((r) => r.json());
+
 const Navbar: React.FC = () => {
-  const { data: session, status } = useSession();
+  const { user, clearUser } = useUserStore();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [credits, setCredits] = useState<UserCredits | null>(null);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
-  const userIsLoggedIn = !!session?.user;
+  const userIsLoggedIn = !!user;
 
-  useEffect(() => {
-    async function fetchCredits() {
-      if (!session?.user?.id) return;
-
-      try {
-        const res = await fetch(`/api/credits?userId=${session.user.id}`);
-        const data = await res.json();
-
-        if (!res.ok) throw new Error(data.error || "Failed to fetch credits");
-
-        setCredits({
-          basicCredits: data.basicCredits,
-          aiCredits: data.aiCredits,
-          plan: data.plan,
-        });
-      } catch (err) {
-        console.error("Failed to fetch credits:", err);
-      }
+  const { data: credits } = useSWR<CreditResponse>(
+    user?.id ? `/api/credits?userId=${user.id}` : null,
+    fetcher,
+    {
+      dedupingInterval: 60000,
+      revalidateOnFocus: false,
     }
-
-    fetchCredits();
-  }, [session]);
+  );
 
   const handleLogout = () => {
+    clearUser();
     signOut({ callbackUrl: "/" });
   };
 
@@ -140,31 +144,18 @@ const Navbar: React.FC = () => {
                 <ModeToggle />
                 {credits && (
                   <div className="flex gap-2">
-                    <motion.div
-                      className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-yellow-100 dark:bg-yellow-600 text-neutral-600 dark:text-white shadow-sm"
-                      initial={{ scale: 1 }}
-                      whileHover={{ scale: 1.02 }}
-                      transition={{ duration: 0.4, ease: "easeInOut" }}
-                    >
-                      <HoverText
-                        label="Basic"
-                        current={credits.basicCredits}
-                        total={DAILY_LIMITS[credits.plan]}
-                      />
-                    </motion.div>
+                    <div className="flex items-center gap-1 px-3 py-1.5 text-sm rounded-full bg-yellow-300 dark:bg-yellow-600 text-neutral-600 dark:text-white shadow-sm">
+                      <span aria-label="Basic">
+                        Basic:{" "}
+                        {formatBasicCredits(credits.basicCredits, credits.plan)}
+                      </span>
+                    </div>
 
-                    <motion.div
-                      className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-blue-100 dark:bg-blue-600 text-neutral-600 dark:text-white shadow-sm"
-                      initial={{ scale: 1 }}
-                      whileHover={{ scale: 1.02 }}
-                      transition={{ duration: 0.4, ease: "easeInOut" }}
-                    >
-                      <HoverText
-                        label="AI"
-                        current={credits.aiCredits}
-                        total={MONTHLY_AI_LIMITS[credits.plan]}
-                      />
-                    </motion.div>
+                    <div className="flex items-center gap-1 px-3 py-1.5 text-sm rounded-full bg-blue-300 dark:bg-blue-600 text-neutral-600 dark:text-white shadow-sm">
+                      <span aria-label="AI">
+                        AI: {formatAiCredits(credits.aiCredits, credits.plan)}
+                      </span>
+                    </div>
                   </div>
                 )}
               </div>
@@ -173,9 +164,9 @@ const Navbar: React.FC = () => {
                 {userIsLoggedIn ? (
                   <div className="relative group">
                     <button className="flex items-center">
-                      {session.user.profilePic ? (
+                      {user.profilePic ? (
                         <Image
-                          src={session.user.profilePic}
+                          src={user.profilePic}
                           width={36}
                           height={36}
                           alt="Avatar"
@@ -183,7 +174,7 @@ const Navbar: React.FC = () => {
                         />
                       ) : (
                         <div className="w-9 h-9 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-semibold">
-                          {session.user.name?.[0]?.toUpperCase() || "U"}
+                          {user.name?.[0]?.toUpperCase() || "U"}
                         </div>
                       )}
                     </button>
@@ -245,19 +236,19 @@ const Navbar: React.FC = () => {
               {credits && (
                 <div className="flex justify-around bg-neutral-100 dark:bg-neutral-800/40 rounded-md p-2 mb-2">
                   <div className="text-center">
-                    <p className="text-xs text-neutral-600 dark:text-neutral-300">
+                    <p className="text-xs text-yellow-600 dark:text-yellow-300">
                       Basic
                     </p>
                     <p className="font-semibold text-sm text-neutral-800 dark:text-white">
-                      {credits.basicCredits} / {DAILY_LIMITS[credits.plan]}
+                      {formatBasicCredits(credits.basicCredits, credits.plan)}
                     </p>
                   </div>
                   <div className="text-center">
-                    <p className="text-xs text-neutral-600 dark:text-neutral-300">
+                    <p className="text-xs text-blue-600 dark:text-blue-300">
                       AI
                     </p>
                     <p className="font-semibold text-sm text-neutral-800 dark:text-white">
-                      {credits.aiCredits} / {MONTHLY_AI_LIMITS[credits.plan]}
+                      {formatAiCredits(credits.aiCredits, credits.plan)}
                     </p>
                   </div>
                 </div>
@@ -315,9 +306,9 @@ const Navbar: React.FC = () => {
               {userIsLoggedIn ? (
                 <div className="space-y-3 px-2">
                   <div className="flex items-center gap-3 px-2 py-2 bg-neutral-50 dark:bg-neutral-800/40 rounded-md">
-                    {session.user.profilePic ? (
+                    {user.profilePic ? (
                       <Image
-                        src={session.user.profilePic}
+                        src={user.profilePic}
                         width={40}
                         height={40}
                         alt="Avatar"
@@ -325,15 +316,15 @@ const Navbar: React.FC = () => {
                       />
                     ) : (
                       <div className="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-semibold">
-                        {session.user.name?.[0]?.toUpperCase()}
+                        {user.name?.[0]?.toUpperCase()}
                       </div>
                     )}
                     <div>
                       <p className="text-neutral-800 dark:text-neutral-200 font-medium">
-                        {session.user.name}
+                        {user.name}
                       </p>
                       <p className="text-neutral-500 dark:text-neutral-400 text-sm">
-                        {session.user.email}
+                        {user.email}
                       </p>
                     </div>
                   </div>
@@ -394,30 +385,3 @@ const Navbar: React.FC = () => {
 };
 
 export default Navbar;
-
-const HoverText: React.FC<{
-  label: string;
-  current: number;
-  total: number;
-}> = ({ label, current, total }) => {
-  const [hovered, setHovered] = useState(false);
-
-  return (
-    <span
-      className="flex items-center gap-1"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
-      <motion.span
-        key={hovered ? "total" : "current"}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.1, ease: "easeInOut" }}
-        className="inline-block text-sm"
-      >
-        {hovered ? `${label}: ${current} / ${total}` : current}
-      </motion.span>
-    </span>
-  );
-};

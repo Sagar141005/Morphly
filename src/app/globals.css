@@ -3,6 +3,14 @@
 
 @custom-variant dark (&:is(.dark *));
 
+body {
+  background: linear-gradient(to bottom, white, rgba(239, 246, 255, 0.3));
+}
+
+body.dark {
+  background: linear-gradient(to bottom, black, #111);
+}
+
 :root {
   --background: oklch(0.9755 0.0045 258.3245);
   --foreground: oklch(0.1689 0.0021 286.1774);

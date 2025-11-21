@@ -1,8 +1,10 @@
 import React from "react";
 import { Star, Zap, FileDown } from "lucide-react";
+import { useUserStore } from "@/stores/userStore";
 
-export default function PlanCard({ plan }: { plan: string }) {
-  const normalized = plan.toLowerCase();
+export default function PlanCard() {
+  const user = useUserStore((state) => state.user);
+  const normalized = user?.plan.toLowerCase() || "free";
 
   const PLAN_INFO: Record<string, { label: string; icon: any; desc: string }> =
     {

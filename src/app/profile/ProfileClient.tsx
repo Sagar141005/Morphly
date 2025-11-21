@@ -15,8 +15,9 @@ import {
 } from "lucide-react";
 import PlanCard from "@/components/dashboard/PlanCard";
 import FilesTable from "@/components/dashboard/FilesTable";
-import { useSession } from "next-auth/react";
 import ConfirmModal from "@/components/ConfirmModal";
+import { useUserStore } from "@/stores/userStore";
+import Loader from "@/components/Loader";
 
 interface UserFile {
   id: string;
@@ -39,17 +40,21 @@ interface User {
 }
 
 export default function ProfileClient({ user }: { user: User }) {
-  const [files, setFiles] = useState<UserFile[]>(user.files);
+  const { user: storedUser, setUser } = useUserStore();
+
   const [allFiles, setAllFiles] = useState<UserFile[]>(user.allFiles);
   const [editing, setEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [name, setName] = useState(user.name || "");
   const [profilePicFile, setProfilePicFile] = useState<File | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [fileToDelete, setFileToDelete] = useState<string | null>(null);
 
-  const { data: session, update } = useSession();
+  const files = allFiles.slice(0, 10);
 
   const handleSave = async () => {
+    setSaving(true);
+
     try {
       const formData = new FormData();
       formData.append("name", name);
@@ -63,17 +68,20 @@ export default function ProfileClient({ user }: { user: User }) {
       if (!response.ok) throw new Error("Failed to save changes");
 
       const updatedUser = await response.json();
-      await update({
-        ...session,
-        user: updatedUser.user,
+      setUser({
+        ...storedUser!,
+        name: updatedUser.user.name,
+        profilePic: updatedUser.user.profilePic,
       });
 
       setEditing(false);
       setProfilePicFile(null);
-      console.log("User updated:", updatedUser);
+      window.location.reload();
     } catch (err) {
       console.error(err);
       alert("Failed to save changes. Please try again.");
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -92,7 +100,6 @@ export default function ProfileClient({ user }: { user: User }) {
       if (!response.ok) throw new Error("Failed to delete file");
 
       setAllFiles((prev) => prev.filter((f) => f.id !== fileToDelete));
-      setFiles((prev) => prev.filter((f) => f.id !== fileToDelete));
     } catch (err) {
       console.error(err);
       alert("Failed to delete file");
@@ -101,6 +108,8 @@ export default function ProfileClient({ user }: { user: User }) {
       setFileToDelete(null);
     }
   };
+
+  if (!user) return <Loader />;
 
   return (
     <>
@@ -191,9 +200,16 @@ export default function ProfileClient({ user }: { user: User }) {
                 <>
                   <button
                     onClick={handleSave}
-                    className="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition flex items-center gap-1"
+                    disabled={saving}
+                    className="px-3 py-1.5 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
                   >
-                    <Save className="w-4 h-4" /> Save
+                    {saving ? (
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <>
+                        <Save className="w-4 h-4" /> Save
+                      </>
+                    )}
                   </button>
                   <button
                     onClick={() => {
@@ -225,7 +241,7 @@ export default function ProfileClient({ user }: { user: User }) {
         transition={{ delay: 0.2 }}
         className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12"
       >
-        <PlanCard plan={user.plan} />
+        <PlanCard />
 
         <div className="bg-white/70 dark:bg-neutral-900/70 backdrop-blur-md border border-neutral-200 dark:border-neutral-700 rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 p-6">
           <h3 className="text-xl font-bold text-neutral-900 dark:text-white mb-4">

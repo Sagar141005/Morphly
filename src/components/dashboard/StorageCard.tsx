@@ -1,15 +1,15 @@
+import { useUserStore } from "@/stores/userStore";
 import React from "react";
 
 export default function StorageCard({
-  plan,
   lastUpload,
   storageUsed,
 }: {
-  plan: string;
   lastUpload: string | Date;
   storageUsed: number;
 }) {
-  const normalizedPlan = plan?.toLowerCase() || "free";
+  const user = useUserStore((state) => state.user);
+  const normalizedPlan = user?.plan.toLowerCase() || "free";
 
   const STORAGE_LIMITS: Record<string, number> = {
     free: 0,

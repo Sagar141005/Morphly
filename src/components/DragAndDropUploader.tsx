@@ -63,7 +63,9 @@ export default function DragAndDropUploader({
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
-  const userPlan = useUserStore((state) => state.plan);
+  const userPlan = useUserStore(
+    (state) => state.user?.plan.toLowerCase() || "free"
+  );
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {

@@ -2,12 +2,14 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import StorageCard from "@/components/dashboard/StorageCard";
 import PlanCard from "@/components/dashboard/PlanCard";
 import StatsCard from "@/components/dashboard/StatsCard";
 import FilesTable from "@/components/dashboard/FilesTable";
 import ConfirmModal from "@/components/ConfirmModal";
+import { useUserStore } from "@/stores/userStore";
+import Loader from "@/components/Loader";
 
 interface FileType {
   id: string;
@@ -18,17 +20,10 @@ interface FileType {
   createdAt: string | Date;
 }
 
-interface UserType {
-  name: string | null;
-  plan: string;
-}
-
 export default function DashboardClient({
-  user,
   initialFiles,
   stats,
 }: {
-  user: UserType;
   initialFiles: FileType[];
   stats: {
     totalFiles: number;
@@ -37,6 +32,8 @@ export default function DashboardClient({
     storageUsed: number;
   };
 }) {
+  const user = useUserStore((state) => state.user);
+
   const [files, setFiles] = useState<FileType[]>(initialFiles);
   const [cursor, setCursor] = useState<string | null>(
     initialFiles.length > 0 ? initialFiles[initialFiles.length - 1].id : null
@@ -45,6 +42,33 @@ export default function DashboardClient({
   const [loadingMore, setLoadingMore] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [fileToDelete, setFileToDelete] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!user) return;
+
+    const deleteOldFiles = async () => {
+      if (!user.plan || user.plan === "FREE") return;
+
+      try {
+        const res = await fetch("/api/files/delete-old", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId: user.id, plan: user.plan }),
+        });
+        const data = await res.json();
+        if (data.deleted > 0) {
+          console.log(`Deleted ${data.deleted} old files`);
+          setFiles((prev) =>
+            prev.filter((f) => !data.deletedFiles.includes(f.id))
+          );
+        }
+      } catch (err) {
+        console.error("Failed to delete old files:", err);
+      }
+    };
+
+    deleteOldFiles();
+  }, [user]);
 
   const loadMoreFromDB = async () => {
     if (!cursor) return;
@@ -91,6 +115,8 @@ export default function DashboardClient({
     }
   };
 
+  if (!user) return <Loader />;
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-blue-50/30 dark:from-black dark:to-neutral-900 antialiased">
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 pt-24 sm:pt-32 pb-10">
@@ -117,12 +143,11 @@ export default function DashboardClient({
           transition={{ delay: 0.3 }}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-14"
         >
-          <PlanCard plan={user.plan} />
+          <PlanCard />
 
           <StatsCard stats={stats} />
 
           <StorageCard
-            plan={user.plan}
             lastUpload={files[0]?.createdAt}
             storageUsed={stats.storageUsed}
           />
