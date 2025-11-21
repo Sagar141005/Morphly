@@ -12,7 +12,7 @@ export interface UserCredits {
 const DAILY_LIMITS: Record<Plan, number> = {
   FREE: 5,
   PLUS: 25,
-  PRO: 99999,
+  PRO: Number.MAX_SAFE_INTEGER,
 };
 
 const MONTHLY_AI_LIMITS: Record<Plan, number> = {
