@@ -60,8 +60,11 @@ export function SignupForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 text-left">
-      <div className="grid gap-3">
-        <Label htmlFor="name" className="text-sm font-medium text-gray-700">
+      <div className="grid gap-2 text-left">
+        <Label
+          htmlFor="name"
+          className="text-sm font-medium text-neutral-700 dark:text-neutral-300"
+        >
           Full Name
         </Label>
         <Input
@@ -69,7 +72,7 @@ export function SignupForm() {
           type="text"
           placeholder="John Doe"
           {...register("name")}
-          className="text-base"
+          className="text-base bg-white dark:bg-neutral-800 border border-gray-300 dark:border-neutral-700 text-neutral-900 dark:text-neutral-100"
         />
         {errors.name && (
           <p className="mt-1 text-xs text-red-600">{errors.name.message}</p>
@@ -77,7 +80,10 @@ export function SignupForm() {
       </div>
 
       <div className="grid gap-3">
-        <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+        <Label
+          htmlFor="email"
+          className="text-sm font-medium text-neutral-700 dark:text-neutral-300"
+        >
           Email
         </Label>
         <Input
@@ -85,7 +91,7 @@ export function SignupForm() {
           type="email"
           placeholder="me@example.com"
           {...register("email")}
-          className="text-base"
+          className="text-base bg-white dark:bg-neutral-800 border border-gray-300 dark:border-neutral-700 text-neutral-900 dark:text-neutral-100"
         />
         {errors.email && (
           <p className="mt-1 text-xs text-red-600">{errors.email.message}</p>
@@ -93,7 +99,10 @@ export function SignupForm() {
       </div>
 
       <div className="grid gap-3">
-        <Label htmlFor="password" className="text-sm font-medium text-gray-700">
+        <Label
+          htmlFor="password"
+          className="text-sm font-medium text-neutral-700 dark:text-neutral-300"
+        >
           Password
         </Label>
         <Input
@@ -101,7 +110,7 @@ export function SignupForm() {
           type="password"
           placeholder="••••••••"
           {...register("password")}
-          className="text-base"
+          className="text-base bg-white dark:bg-neutral-800 border border-gray-300 dark:border-neutral-700 text-neutral-900 dark:text-neutral-100"
         />
         {errors.password && (
           <p className="mt-1 text-xs text-red-600">{errors.password.message}</p>
@@ -120,17 +129,17 @@ export function SignupForm() {
         {loading ? "Creating account..." : "Sign Up"}
       </Button>
 
-      <div className="relative text-center text-sm text-gray-500 my-6">
-        <span className="relative z-10 px-2 bg-white/70 backdrop-blur-md">
+      <div className="relative text-center text-sm text-neutral-500 dark:text-neutral-400 my-6">
+        <span className="relative z-10 px-2 bg-white/70 dark:bg-neutral-900/70 backdrop-blur-md">
           or continue with
         </span>
-        <div className="absolute inset-0 top-1/2 border-t border-gray-200 -z-0"></div>
+        <div className="absolute inset-0 top-1/2 border-t border-gray-200 dark:border-neutral-700 -z-0"></div>
       </div>
 
       <Button
         type="button"
         variant="outline"
-        className="w-full flex items-center justify-center gap-2 border-gray-300 text-gray-700 hover:bg-gray-50 transition"
+        className="w-full flex items-center justify-center gap-2 border-gray-300 dark:border-neutral-700 text-neutral-700 dark:text-neutral-200 hover:bg-gray-50 dark:hover:bg-neutral-800 transition"
         onClick={() => signIn("google", { callbackUrl: "/" })}
       >
         <img

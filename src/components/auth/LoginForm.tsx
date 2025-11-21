@@ -9,7 +9,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import Link from "next/link";
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
@@ -58,8 +57,11 @@ export function LoginForm() {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      <div className="grid gap-3 text-left">
-        <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+      <div className="grid gap-2 text-left">
+        <Label
+          htmlFor="email"
+          className="text-sm font-medium text-neutral-900 dark:text-neutral-200"
+        >
           Email
         </Label>
         <Input
@@ -67,15 +69,20 @@ export function LoginForm() {
           type="email"
           placeholder="me@example.com"
           {...register("email")}
-          className="text-base"
+          className="text-base bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 placeholder-neutral-400 dark:placeholder-neutral-500 focus:ring-blue-500 focus:border-blue-500"
         />
         {errors.email && (
-          <p className="mt-1 text-xs text-red-600">{errors.email.message}</p>
+          <p className="mt-1 text-xs text-red-600 dark:text-red-500">
+            {errors.email.message}
+          </p>
         )}
       </div>
 
-      <div className="grid gap-3 text-left">
-        <Label htmlFor="password" className="text-sm font-medium text-gray-700">
+      <div className="grid gap-2 text-left">
+        <Label
+          htmlFor="password"
+          className="text-sm font-medium text-neutral-900 dark:text-neutral-200"
+        >
           Password
         </Label>
         <Input
@@ -83,21 +90,25 @@ export function LoginForm() {
           type="password"
           placeholder="••••••••"
           {...register("password")}
-          className="text-base"
+          className="text-base bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 placeholder-neutral-400 dark:placeholder-neutral-500 focus:ring-blue-500 focus:border-blue-500"
         />
         {errors.password && (
-          <p className="mt-1 text-xs text-red-600">{errors.password.message}</p>
+          <p className="mt-1 text-xs text-red-600 dark:text-red-500">
+            {errors.password.message}
+          </p>
         )}
       </div>
 
       {error && (
-        <p className="text-center text-sm text-red-700 font-medium">{error}</p>
+        <p className="text-center text-sm text-red-700 dark:text-red-500 font-medium">
+          {error}
+        </p>
       )}
 
       <div className="flex flex-col gap-4">
         <Button
           type="submit"
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white text-base font-medium shadow-md hover:shadow-lg transition"
+          className="w-full bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white text-base font-medium shadow-md hover:shadow-lg transition"
           disabled={loading}
         >
           {loading ? "Logging in..." : "Login"}
@@ -106,7 +117,7 @@ export function LoginForm() {
         <Button
           type="button"
           variant="outline"
-          className="w-full flex items-center justify-center gap-2 border-gray-300 text-gray-700 hover:bg-gray-50 transition"
+          className="w-full flex items-center justify-center gap-2 border border-neutral-300 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition"
           onClick={() => signIn("google", { callbackUrl: "/" })}
         >
           <img
