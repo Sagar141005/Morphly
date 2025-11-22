@@ -257,7 +257,7 @@ export default function Home() {
               <Button
                 asChild
                 size="lg"
-                className="px-6 py-3 text-base font-semibold bg-blue-600 hover:bg-blue-700 shadow-md hover:shadow-lg transition-all"
+                className="px-6 py-3 text-base font-semibold bg-blue-600 hover:bg-blue-700 dark:text-white shadow-md hover:shadow-lg transition-all"
               >
                 <Link href="#uploader" className="flex items-center gap-2">
                   <FileUp className="h-5 w-5" />
