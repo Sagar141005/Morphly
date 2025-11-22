@@ -15,6 +15,7 @@ import {
 import { cn } from "@/lib/utils";
 import { ArrowRight, Check, Star, Zap, Shield } from "lucide-react";
 import NumberFlow from "@number-flow/react";
+import toast from "react-hot-toast";
 
 const plans = [
   {
@@ -95,23 +96,32 @@ export default function Pricing() {
 
   const handleCheckout = async (planId: string) => {
     if (planId === "free") {
+      toast("Redirecting to login…");
       window.location.href = "/login";
       return;
     }
 
-    const res = await fetch("/api/billing", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ planId, frequency }),
-    });
+    try {
+      const res = await fetch("/api/billing", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ planId, frequency }),
+      });
 
-    const data = await res.json();
-    if (data.url) {
-      window.location.href = data.url;
-    } else {
-      console.error("Failed to create checkout session:", data.error);
+      const data = await res.json();
+
+      if (data.url) {
+        toast.success("Redirecting to checkout…");
+        window.location.href = data.url;
+      } else {
+        console.error("Failed to create checkout session:", data.error);
+        toast.error(data.error || "Failed to create checkout session");
+      }
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.message || "Something went wrong during checkout");
     }
   };
 
