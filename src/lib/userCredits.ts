@@ -32,7 +32,7 @@ export async function resetUserCredits(userId: string) {
   if (isNewDay) {
     if (user.plan === "FREE") basicCredits = 5;
     if (user.plan === "PLUS") basicCredits = 25;
-    if (user.plan === "PRO") basicCredits = Number.MAX_SAFE_INTEGER;
+    if (user.plan === "PRO") basicCredits = 9999;
   }
 
   if (isNewMonth) {

@@ -20,7 +20,7 @@ type CreditResponse = {
 const DAILY_LIMITS = {
   FREE: 5,
   PLUS: 25,
-  PRO: Number.MAX_SAFE_INTEGER,
+  PRO: 9999,
 };
 
 const MONTHLY_AI_LIMITS = {
