@@ -36,7 +36,7 @@ export default function Accordion({ items }: AccordionProps) {
         return (
           <div
             key={index}
-            className={`border rounded-2xl transition-all duration-300 ${
+            className={`border rounded-3xl transition-all duration-300 ${
               isOpen
                 ? "bg-neutral-50 dark:bg-neutral-800/50 border-blue-200 dark:border-blue-900"
                 : "bg-white dark:bg-neutral-900 border-neutral-200 dark:border-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700"

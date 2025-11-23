@@ -77,7 +77,7 @@ const features = [
     icon: Lock,
     title: "Secure & Private Auth",
     description:
-      "Log in securely with Google or GitHub. Your data is protected with industry-standard authentication.",
+      "Log in securely with Google or Email. Your data is protected with industry-standard authentication.",
     color: "text-purple-600 dark:text-purple-400",
     bgColor: "bg-purple-50 dark:bg-purple-900/20",
     gradient: "from-purple-500/10",
