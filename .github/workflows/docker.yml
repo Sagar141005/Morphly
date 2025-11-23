@@ -1,0 +1,38 @@
+# Build & Push Docker Images for backend only
+name: Build and Push Backend Docker Images
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build & Push Python Service
+        run: |
+          IMAGE=ghcr.io/${{ github.repository_owner }}/morphly-python
+          docker build -t $IMAGE:latest -t $IMAGE:${{ github.sha }} ./python
+          docker push $IMAGE:latest
+          docker push $IMAGE:${{ github.sha }}
+
+      - name: Build & Push LibreOffice Service
+        run: |
+          IMAGE=ghcr.io/${{ github.repository_owner }}/morphly-libreoffice
+          docker build -t $IMAGE:latest -t $IMAGE:${{ github.sha }} ./libreoffice
+          docker push $IMAGE:latest
+          docker push $IMAGE:${{ github.sha }}
