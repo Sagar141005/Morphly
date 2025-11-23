@@ -31,16 +31,17 @@ export default function PlanCard() {
   return (
     <div
       className={`
-        relative overflow-hidden rounded-2xl border backdrop-blur-md min-h-[195px]
-        ${
-          normalized === "pro"
-            ? "bg-gradient-to-br from-blue-600/90 via-blue-500/90 to-blue-700/90 border-blue-400 text-white shadow-md hover:shadow-lg"
-            : normalized === "plus"
-            ? "bg-gradient-to-br from-blue-50 via-blue-100/70 to-blue-200/50 border-blue-200 text-neutral-900 dark:bg-gradient-to-br dark:from-neutral-800 dark:via-neutral-900 dark:to-neutral-800 dark:border-neutral-700/80 dark:text-neutral-100 shadow-sm hover:shadow-md"
-            : "bg-white/70 dark:bg-neutral-900/70 border-neutral-200 dark:border-neutral-700 dark:text-neutral-100 text-neutral-900 shadow-sm hover:shadow-md"
-        }
-        transition-all duration-300
-      `}
+      relative overflow-hidden rounded-2xl border backdrop-blur-md
+      ${
+        normalized === "pro"
+          ? "bg-gradient-to-br from-blue-600/90 via-blue-500/90 to-blue-700/90 border-blue-400 text-white shadow-md hover:shadow-lg"
+          : normalized === "plus"
+          ? "bg-gradient-to-br from-blue-50 via-blue-100/70 to-blue-200/50 border-blue-200 text-neutral-900 dark:bg-gradient-to-br dark:from-neutral-800 dark:via-neutral-900 dark:to-neutral-800 dark:border-neutral-700/80 dark:text-neutral-100 shadow-sm hover:shadow-md"
+          : "bg-white/70 dark:bg-neutral-900/70 border-neutral-200 dark:border-neutral-700 dark:text-neutral-100 text-neutral-900 shadow-sm hover:shadow-md"
+      }
+      transition-all duration-300
+      h-full
+    `}
     >
       {normalized === "pro" && (
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,white,transparent_70%)] opacity-10" />
@@ -107,7 +108,7 @@ export default function PlanCard() {
           ) : (
             <Link
               href="/pricing"
-              className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition-colors shadow-sm"
+              className="px-4 py-2 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition-colors shadow-sm cursor-pointer"
             >
               Upgrade to {normalized === "plus" ? "Pro" : "Plus"}
             </Link>

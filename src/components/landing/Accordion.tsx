@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useLayoutEffect } from "react";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { ChevronDown } from "lucide-react";
 
 interface AccordionItem {

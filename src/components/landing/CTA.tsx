@@ -16,7 +16,7 @@ export default function CTA() {
       "
     >
       <div className="max-w-3xl mx-auto px-6 relative z-10">
-        <h2 className="text-4xl font-extrabold mb-4 tracking-tight drop-shadow-sm">
+        <h2 className="text-5xl sm:text-4xl font-extrabold mb-4 tracking-tight drop-shadow-sm">
           Ready to level up your file workflow?
         </h2>
         <p className="text-lg text-blue-100 dark:text-blue-200/90 mb-8 leading-relaxed">

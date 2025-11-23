@@ -101,17 +101,19 @@ export function LoginForm() {
 
       <div className="flex flex-col gap-4">
         <Button
+          size="lg"
           type="submit"
-          className="w-full bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white text-base font-medium shadow-md hover:shadow-lg transition"
+          className="w-full font-semibold bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg transition-all duration-300"
           disabled={loading}
         >
           {loading ? "Logging in..." : "Login"}
         </Button>
 
         <Button
+          size="lg"
           type="button"
           variant="outline"
-          className="w-full flex items-center justify-center gap-2 border border-neutral-300 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition"
+          className="w-full flex items-center justify-center gap-2 font-semibold bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700 transition-all duration-300"
           onClick={() => signIn("google", { callbackUrl: "/" })}
         >
           <img

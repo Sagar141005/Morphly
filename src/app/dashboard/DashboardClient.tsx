@@ -1,8 +1,9 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { Plus, ArrowRight, Layers, Sparkles, Upload } from "lucide-react";
 import StorageCard from "@/components/dashboard/StorageCard";
 import PlanCard from "@/components/dashboard/PlanCard";
 import StatsCard from "@/components/dashboard/StatsCard";
@@ -118,84 +119,136 @@ export default function DashboardClient({
 
   if (!user) return <Loader />;
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-blue-50/30 dark:from-black dark:to-neutral-900 antialiased">
-      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 pt-24 sm:pt-32 pb-10">
+    <div className="min-h-screen relative overflow-hidden">
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-100/50 dark:bg-blue-900/10 rounded-full blur-3xl opacity-60" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-100/50 dark:bg-indigo-900/10 rounded-full blur-3xl opacity-60" />
+      </div>
+
+      <main className="relative z-10 flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 pt-24 sm:pt-32 pb-20">
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="mb-12"
+          variants={containerVariants}
+          initial="hidden"
+          animate="show"
         >
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-neutral-900 dark:text-white mb-1">
-            Welcome back,{" "}
-            <span className="text-blue-600 dark:text-blue-400">
-              {user.name || "Morphly Pro"}
-            </span>
-          </h1>
-          <p className="text-neutral-600 dark:text-neutral-300 text-sm sm:text-base">
-            Here’s an overview of your recent activity and files.
-          </p>
-        </motion.div>
+          <motion.div variants={itemVariants} className="mb-10">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <h1 className="text-5xl sm:text-4xl font-extrabold text-neutral-900 dark:text-white tracking-tight mb-2">
+                  Welcome back,{" "}
+                  <span className="text-transparent bg-clip-text bg-blue-600 dark:bg-blue-400">
+                    {user.name || "Creator"}
+                  </span>
+                  <span className="ml-2 inline-block animate-wave origin-bottom-right">
+                    👋
+                  </span>
+                </h1>
+                <p className="text-neutral-500 dark:text-neutral-400 text-base max-w-2xl">
+                  Your workspace is ready. Manage your files and track your
+                  usage below.
+                </p>
+              </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-14"
-        >
-          <PlanCard />
+              <div className="hidden sm:block">
+                <Link
+                  href="/image/convert"
+                  className="px-4 py-2 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 text-neutral-700 dark:text-neutral-300 rounded-xl text-sm font-medium hover:bg-neutral-50 dark:hover:bg-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700 transition-all flex items-center gap-2 shadow-sm"
+                >
+                  <span className="mr-2">
+                    <Plus className="w-4 h-4" />
+                  </span>
+                  New Conversion
+                </Link>
+              </div>
+            </div>
+          </motion.div>
 
-          <StatsCard stats={stats} />
+          <motion.div
+            variants={itemVariants}
+            className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12"
+          >
+            <div className="h-full">
+              <PlanCard />
+            </div>
+            <div className="h-full">
+              <StatsCard stats={stats} />
+            </div>
+            <div className="h-full">
+              <StorageCard
+                lastUpload={files[0]?.createdAt}
+                storageUsed={stats.storageUsed}
+              />
+            </div>
+          </motion.div>
 
-          <StorageCard
-            lastUpload={files[0]?.createdAt}
-            storageUsed={stats.storageUsed}
-          />
-        </motion.div>
+          <motion.section variants={itemVariants} className="mb-16">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <h2 className="text-xl font-bold text-neutral-900 dark:text-white flex items-center gap-2">
+                  <Layers className="w-5 h-5 text-neutral-400" />
+                  Recent Files
+                </h2>
+                <span className="px-2.5 py-0.5 rounded-full bg-neutral-100 dark:bg-neutral-800 text-xs font-medium text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-700">
+                  {stats.totalFiles}
+                </span>
+              </div>
 
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="mb-16"
-        >
-          <div className="flex items-center justify-between mb-6 gap-4">
-            <h2 className="text-xl sm:text-2xl font-semibold text-neutral-900 dark:text-white">
-              Recent Conversions
-            </h2>
-            <Link
-              href="/convert"
-              className="inline-flex items-center px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-md shadow-sm hover:bg-blue-700 transition-colors"
-            >
-              + New Conversion
-            </Link>
-          </div>
-
-          {files.length === 0 ? (
-            <div className="text-center py-16 bg-white/50 dark:bg-neutral-900/50 backdrop-blur-xl rounded-2xl border border-neutral-200 dark:border-neutral-700 shadow-md">
-              <p className="text-base text-neutral-600 dark:text-neutral-300 mb-2">
-                No files yet — your workspace is clear!
-              </p>
               <Link
-                href="/"
-                className="inline-block mt-2 text-blue-600 dark:text-blue-400 font-medium hover:underline text-sm"
+                href="/image/convert"
+                className="sm:hidden inline-flex items-center justify-center p-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
               >
-                Start your first conversion →
+                <Plus className="w-5 h-5" />
               </Link>
             </div>
-          ) : (
-            <FilesTable
-              files={files}
-              visibleCount={visibleCount}
-              onLoadMore={handleShowMore}
-              loadingMore={loadingMore}
-              onDelete={handleDeleteClick}
-              showLoadMore={true}
-            />
-          )}
-        </motion.section>
+
+            {files.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-20 bg-white dark:bg-neutral-900 rounded-3xl border border-dashed border-neutral-300 dark:border-neutral-700">
+                <div className="p-4 bg-neutral-50 dark:bg-neutral-800 rounded-full mb-4">
+                  <Upload className="w-8 h-8 text-neutral-400 dark:text-neutral-500" />
+                </div>
+                <p className="text-lg font-medium text-neutral-900 dark:text-white mb-1">
+                  No files converted yet
+                </p>
+                <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-6">
+                  Your workspace is clean and ready to go.
+                </p>
+                <a
+                  href="/image/convert"
+                  className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-xl transition-all shadow-lg shadow-blue-500/20"
+                >
+                  Start new conversion
+                </a>
+              </div>
+            ) : (
+              <FilesTable
+                files={files}
+                visibleCount={visibleCount}
+                onLoadMore={handleShowMore}
+                loadingMore={loadingMore}
+                onDelete={handleDeleteClick}
+                showLoadMore={true}
+              />
+            )}
+          </motion.section>
+        </motion.div>
       </main>
+
       <ConfirmModal
         isOpen={modalOpen}
         message="Are you sure you want to delete this file? This action cannot be undone."

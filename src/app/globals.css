@@ -12,6 +12,14 @@ body.dark {
 }
 
 :root {
+  --font-manrope: "Manrope", sans-serif;
+}
+
+.font-manrope {
+  font-family: var(--font-manrope);
+}
+
+:root {
   --background: oklch(0.9755 0.0045 258.3245);
   --foreground: oklch(0.1689 0.0021 286.1774);
   --card: oklch(1 0 0);

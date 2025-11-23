@@ -1,5 +1,9 @@
-import { useUserStore } from "@/stores/userStore";
+"use client";
+
 import React from "react";
+import { motion } from "motion/react";
+import { HardDrive, Clock } from "lucide-react";
+import { useUserStore } from "@/stores/userStore";
 
 export default function StorageCard({
   lastUpload,
@@ -30,41 +34,65 @@ export default function StorageCard({
     : "—";
 
   return (
-    <div className="relative p-5 bg-white/70 dark:bg-neutral-900/70 backdrop-blur-md border border-neutral-200 dark:border-neutral-700 rounded-xl shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
-      <div>
-        <p className="text-xl sm:text-2xl font-semibold text-neutral-700 dark:text-neutral-200 mb-1">
-          Storage Used
-        </p>
+    <div className="relative overflow-hidden rounded-3xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-6 sm:p-8 flex flex-col justify-between h-full shadow-sm hover:shadow-md transition-all duration-300">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 rounded-xl bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
+            <HardDrive className="w-5 h-5" />
+          </div>
+          <span className="font-bold text-neutral-900 dark:text-white text-lg">
+            Storage
+          </span>
+        </div>
+      </div>
 
+      <div className="flex-1 flex flex-col justify-center">
         {normalizedPlan === "free" ? (
-          <p className="mt-3 text-sm text-neutral-600 dark:text-neutral-300">
-            Your plan doesn't include cloud storage. Files are available for
-            immediate download only.
-          </p>
+          <div className="py-2">
+            <p className="text-sm text-neutral-600 dark:text-neutral-400 leading-relaxed bg-neutral-50 dark:bg-neutral-800/50 p-3 rounded-xl border border-neutral-100 dark:border-neutral-800">
+              Your plan doesn't include cloud storage. Files are available for
+              immediate download only.
+            </p>
+          </div>
         ) : (
-          <>
-            <div className="relative w-full h-3 bg-neutral-200 dark:bg-neutral-700 rounded-full overflow-hidden mt-2">
-              <div
-                className="absolute top-0 left-0 h-full bg-blue-600 dark:bg-blue-500 rounded-full transition-all duration-500"
-                style={{ width: `${percent}%` }}
-              />
+          <div className="py-1">
+            <div className="flex items-end gap-1.5 mb-3">
+              <span className="text-3xl font-extrabold text-neutral-900 dark:text-white tracking-tight">
+                {usedMB}
+                <span className="text-lg text-neutral-500 dark:text-neutral-500 font-semibold ml-1">
+                  MB
+                </span>
+              </span>
+              <span className="text-sm font-medium text-neutral-400 dark:text-neutral-500 mb-1.5 pb-0.5">
+                / {limitMB.toLocaleString()} MB
+              </span>
             </div>
 
-            <p className="mt-1 text-sm text-neutral-700 dark:text-neutral-300">
-              {usedMB} MB / {limitMB} MB
-            </p>
-          </>
+            <div className="w-full h-3 bg-neutral-100 dark:bg-neutral-800 rounded-full overflow-hidden">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${percent}%` }}
+                transition={{ duration: 1.2, ease: "easeOut" }}
+                className={`h-full rounded-full ${
+                  percent > 90
+                    ? "bg-red-500"
+                    : percent > 75
+                    ? "bg-amber-500"
+                    : "bg-blue-600"
+                }`}
+              />
+            </div>
+          </div>
         )}
       </div>
 
-      <div className="flex items-center justify-between mt-3">
-        <div>
-          <p className="text-xs font-medium text-neutral-500 dark:text-neutral-400">
-            Last Upload
-          </p>
-          <p className="text-lg font-semibold text-neutral-900 dark:text-white mt-1">
+      <div className="mt-6 pt-4 border-t border-neutral-100 dark:border-neutral-800">
+        <div className="flex items-center gap-2 text-xs text-neutral-500 dark:text-neutral-400">
+          <Clock className="w-3.5 h-3.5" />
+          <span>Last upload:</span>
+          <span className="font-medium text-neutral-700 dark:text-neutral-300">
             {lastUploadDate}
-          </p>
+          </span>
         </div>
       </div>
     </div>

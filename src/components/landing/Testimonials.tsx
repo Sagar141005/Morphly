@@ -1,5 +1,5 @@
 import React from "react";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 
 const Testimonials = () => {
   const allTestimonials = [
@@ -127,7 +127,7 @@ const Testimonials = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.7 }}
-          className="text-4xl font-extrabold text-neutral-900 dark:text-white mb-4"
+          className="text-5xl sm:text-4xl font-extrabold text-neutral-900 dark:text-white mb-4"
         >
           Trusted by Professionals Everywhere
         </motion.h2>

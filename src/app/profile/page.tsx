@@ -31,7 +31,7 @@ export default async function ProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-blue-50/20 dark:from-black dark:to-neutral-900 antialiased flex flex-col">
+    <div className="min-h-screen bg-white dark:bg-neutral-950 antialiased flex flex-col">
       <Navbar />
 
       <main className="flex-1 w-full max-w-4xl mx-auto px-4 sm:px-6 pt-24 sm:pt-32 pb-10">

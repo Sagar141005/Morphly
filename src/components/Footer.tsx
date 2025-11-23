@@ -3,7 +3,7 @@ import Link from "next/link";
 
 const Footer: React.FC = () => {
   return (
-    <footer className="bg-gradient-to-b from-neutral-50 to-white dark:from-neutral-900 dark:to-neutral-800 border-t border-neutral-200 dark:border-neutral-700 text-sm text-neutral-600 dark:text-neutral-300">
+    <footer className="bg-gradient-to-br from-neutral-50 to-white dark:from-neutral-900/60 dark:to-neutral-900/60 border-t border-neutral-200 dark:border-neutral-700 text-sm text-neutral-600 dark:text-neutral-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
           <div>
@@ -25,21 +25,21 @@ const Footer: React.FC = () => {
 
             <div className="flex space-x-4 mt-5 text-neutral-400 dark:text-neutral-500">
               <Link
-                href="https://github.com/morphly"
+                href="https://github.com/Sagar141005/Morphly"
                 aria-label="GitHub"
                 className="hover:text-black dark:hover:text-white transition-colors"
               >
                 <Github className="h-5 w-5" />
               </Link>
               <Link
-                href="https://linkedin.com/company/morphly"
+                href="https://www.linkedin.com/in/sagar-saini-9b45a52b2/"
                 aria-label="LinkedIn"
                 className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
               >
                 <Linkedin className="h-5 w-5" />
               </Link>
               <Link
-                href="https://twitter.com/morphly"
+                href="https://x.com/not_sagar1410"
                 aria-label="Twitter"
                 className="hover:text-blue-400 dark:hover:text-blue-300 transition-colors"
               >
@@ -145,7 +145,7 @@ const Footer: React.FC = () => {
               />
               <button
                 type="submit"
-                className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white rounded-md font-medium transition-shadow shadow-sm hover:shadow-md"
+                className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-medium transition-shadow shadow-sm hover:shadow-md cursor-pointer"
               >
                 Subscribe
               </button>

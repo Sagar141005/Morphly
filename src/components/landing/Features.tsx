@@ -112,7 +112,7 @@ const Features = () => {
     <section id="features" className="py-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-20">
-          <h2 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-white sm:text-4xl mb-6">
+          <h2 className="text-5xl sm:text-4xl font-bold tracking-tight text-neutral-900 dark:text-white mb-6">
             More Power Than Your Standard Converter
           </h2>
           <p className="text-lg text-neutral-600 dark:text-neutral-400 leading-relaxed">

@@ -1,17 +1,20 @@
-import { motion } from "framer-motion";
+"use client";
+
 import {
-  CheckCircle,
+  CheckCircle2,
   Clock,
   Database,
   FileText,
   ImageIcon,
   Layers,
-  Lightbulb,
-  Lock,
-  ShieldCheck,
-  Wand2,
   Zap,
+  Wand2,
+  ShieldCheck,
+  Lock,
+  ArrowDownCircle,
+  Cpu,
 } from "lucide-react";
+import { motion } from "motion/react";
 
 const features = [
   {
@@ -19,251 +22,217 @@ const features = [
     title: "Image Formats",
     description: "JPG, PNG, WEBP, GIF, SVG",
     color: "text-blue-600 dark:text-blue-400",
-    bgColor: "bg-blue-50 dark:bg-blue-900",
-    highlight: "from-blue-500/10 dark:from-blue-900/80",
+    bgColor: "bg-blue-50 dark:bg-blue-900/20",
+    highlight: "from-blue-500/10 dark:from-blue-900/40",
   },
   {
     icon: FileText,
     title: "Document Formats",
     description: "PDF, DOCX, TXT, CSV",
     color: "text-violet-600 dark:text-violet-400",
-    bgColor: "bg-violet-50 dark:bg-violet-900",
-    highlight: "from-violet-500/10 dark:from-violet-900/80",
-  },
-  {
-    icon: Zap,
-    title: "Conversion Speed",
-    description: "Under 5 seconds per file",
-    color: "text-emerald-600 dark:text-emerald-400",
-    bgColor: "bg-emerald-50 dark:bg-emerald-900",
-    highlight: "from-emerald-500/10 dark:from-emerald-900/80",
+    bgColor: "bg-violet-50 dark:bg-violet-900/20",
+    highlight: "from-violet-500/10 dark:from-violet-900/40",
   },
   {
     icon: Layers,
     title: "Batch Processing",
     description: "Convert multiple files simultaneously",
     color: "text-orange-600 dark:text-orange-400",
-    bgColor: "bg-orange-50 dark:bg-orange-900",
-    highlight: "from-orange-500/10 dark:from-orange-900/80",
+    bgColor: "bg-orange-50 dark:bg-orange-900/20",
+    highlight: "from-orange-500/10 dark:from-orange-900/40",
   },
   {
     icon: Wand2,
     title: "AI BG Removal",
     description: "Remove image backgrounds with AI.",
     color: "text-fuchsia-600 dark:text-fuchsia-400",
-    bgColor: "bg-fuchsia-50 dark:bg-fuchsia-900",
-    highlight: "from-fuchsia-500/10 dark:from-fuchsia-900/80",
+    bgColor: "bg-fuchsia-50 dark:bg-fuchsia-900/20",
+    highlight: "from-fuchsia-500/10 dark:from-fuchsia-900/40",
   },
   {
     icon: Database,
     title: "Cloud Storage",
     description: "Securely manage past conversions",
     color: "text-indigo-600 dark:text-indigo-400",
-    bgColor: "bg-indigo-50 dark:bg-indigo-900",
-    highlight: "from-indigo-500/10 dark:from-indigo-900/80",
+    bgColor: "bg-indigo-50 dark:bg-indigo-900/20",
+    highlight: "from-indigo-500/10 dark:from-indigo-900/40",
+  },
+  {
+    icon: Zap,
+    title: "Conversion Speed",
+    description: "Under 5 seconds per file",
+    color: "text-emerald-600 dark:text-emerald-400",
+    bgColor: "bg-emerald-50 dark:bg-emerald-900/20",
+    highlight: "from-emerald-500/10 dark:from-emerald-900/40",
   },
 ];
 
 const ConversionOverview: React.FC = () => {
   return (
-    <div className="mt-20 relative">
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 lg:w-[800px] h-[400px] bg-blue-200/30 dark:bg-blue-800/20 rounded-full blur-3xl pointer-events-none" />
+    <div className="mt-24 relative">
+      <div className="relative max-w-7xl mx-auto space-y-24">
+        <div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="text-center max-w-3xl mx-auto mb-16"
+          >
+            <h3 className="text-2xl md:text-3xl font-bold text-neutral-900 dark:text-white mb-4">
+              Maximize Your Conversion Quality
+            </h3>
+            <p className="text-lg text-neutral-600 dark:text-neutral-400 leading-relaxed">
+              Upload high-quality source files for optimal results. Morphly’s
+              smart engine automatically enhances and optimizes your files
+              during conversion.
+            </p>
+          </motion.div>
 
-      <div className="relative max-w-7xl mx-auto px-4 space-y-20">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="text-center max-w-4xl mx-auto mb-12"
-        >
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 dark:bg-blue-900 border border-blue-100 dark:border-blue-700 mb-6">
-            <Lightbulb className="w-4 h-4 text-yellow-400 dark:text-yellow-300" />
-            <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">
-              Conversion Tips
-            </span>
-          </div>
-
-          <h3 className="text-3xl md:text-4xl font-bold text-neutral-900 dark:text-white mb-5 tracking-tight">
-            Maximize Your Conversion Quality
-          </h3>
-          <p className="text-lg text-neutral-600 leading-relaxed dark:text-neutral-300">
-            Upload high-quality source files for optimal results. Morphly’s
-            smart engine automatically enhances and optimizes your files during
-            conversion, preserving clarity and minimizing quality loss.
-          </p>
-        </motion.div>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"
-        >
-          {features.map((feature, index) => {
-            const Icon = feature.icon;
-            return (
-              <div
-                key={index}
-                className={`group relative flex flex-col items-start p-8 rounded-2xl border border-neutral-100 dark:border-neutral-700 bg-white dark:bg-neutral-900 transition-all duration-300 hover:border-neutral-300 hover:shadow-xl`}
-              >
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2, staggerChildren: 0.05 }}
+            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5"
+          >
+            {features.map((feature, index) => {
+              const Icon = feature.icon;
+              return (
                 <div
-                  className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${feature.highlight} to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity`}
-                />
-
-                <div
-                  className={`w-12 h-12 ${feature.bgColor} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}
+                  key={index}
+                  className="group relative flex flex-col items-start p-6 rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 shadow-sm hover:shadow-lg hover:border-neutral-300 dark:hover:border-neutral-700 transition-all duration-300 overflow-hidden"
                 >
-                  <Icon className={`w-6 h-6 ${feature.color}`} />
-                </div>
+                  <div
+                    className={`absolute inset-0 bg-gradient-to-br ${feature.highlight} to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500`}
+                  />
 
-                <div className="flex-1 flex flex-col justify-between w-full">
-                  <h4 className="text-lg font-semibold text-neutral-900 dark:text-white mb-2">
-                    {feature.title}
-                  </h4>
-                  <p className="text-neutral-600 dark:text-neutral-300">
-                    {feature.description}
-                  </p>
-                </div>
-              </div>
-            );
-          })}
-        </motion.div>
+                  <div
+                    className={`relative z-10 w-12 h-12 ${feature.bgColor} rounded-xl flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110`}
+                  >
+                    <Icon className={`w-6 h-6 ${feature.color}`} />
+                  </div>
 
-        <div className="flex items-center justify-center mb-10">
-          <div className="h-px w-32 bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-600 to-transparent" />
+                  <div className="relative z-10">
+                    <h4 className="text-lg font-bold text-neutral-900 dark:text-white mb-1">
+                      {feature.title}
+                    </h4>
+                    <p className="text-sm text-neutral-500 dark:text-neutral-400 leading-relaxed">
+                      {feature.description}
+                    </p>
+                  </div>
+                </div>
+              );
+            })}
+          </motion.div>
         </div>
 
+        <div className="w-full h-px bg-gradient-to-r from-transparent via-neutral-200 dark:via-neutral-800 to-transparent" />
         <motion.section
           id="how-it-works"
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="relative py-12 overflow-hidden"
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="relative"
         >
-          <div className="relative max-w-6xl mx-auto px-6 text-center">
-            <div className="mb-14">
-              <h3 className="text-3xl md:text-4xl font-bold text-neutral-900 dark:text-white tracking-tight mb-3">
-                How Morphly Works
+          <div className="text-center mb-16">
+            <h3 className="text-3xl font-bold text-neutral-900 dark:text-white mb-4">
+              How Morphly Works
+            </h3>
+            <p className="text-lg text-neutral-600 dark:text-neutral-400">
+              A simple, intelligent 3-step process.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 relative">
+            <div className="hidden md:block absolute top-8 left-[16%] right-[16%] h-0.5 bg-neutral-100 dark:bg-neutral-800">
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-200 dark:via-blue-800 to-transparent opacity-50" />
+            </div>
+
+            {[
+              {
+                step: "01",
+                title: "Smart Detection",
+                desc: "Morphly identifies file type and optimizes parameters automatically.",
+                icon: Cpu,
+              },
+              {
+                step: "02",
+                title: "AI Processing",
+                desc: "Our engine enhances clarity and structure while preserving fidelity.",
+                icon: Wand2,
+              },
+              {
+                step: "03",
+                title: "Instant Download",
+                desc: "Your files are ready instantly. No queues, no watermarks.",
+                icon: ArrowDownCircle,
+              },
+            ].map((card, i) => (
+              <div
+                key={card.step}
+                className="relative flex flex-col items-center text-center z-10"
+              >
+                <div className="w-16 h-16 rounded-2xl bg-white dark:bg-neutral-900 border-4 border-neutral-50 dark:border-neutral-950 shadow-xl flex items-center justify-center mb-6 group transition-transform hover:scale-110 duration-300">
+                  <card.icon className="w-7 h-7 text-blue-600 dark:text-blue-400" />
+                </div>
+
+                <h4 className="text-xl font-bold text-neutral-900 dark:text-white mb-3">
+                  {card.title}
+                </h4>
+                <p className="text-neutral-600 dark:text-neutral-400 text-sm leading-relaxed max-w-xs mx-auto">
+                  {card.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+        </motion.section>
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.98 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="rounded-3xl bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 p-8 md:p-12 overflow-hidden relative"
+        >
+          <div className="absolute inset-0 opacity-10 dark:opacity-5 pointer-events-none">
+            <div className="absolute -top-24 -right-24 w-64 h-64 rounded-full bg-blue-500 blur-3xl" />
+            <div className="absolute -bottom-24 -left-24 w-64 h-64 rounded-full bg-purple-500 blur-3xl" />
+          </div>
+
+          <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+            <div className="text-left md:w-1/2">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-white/10 dark:bg-black/5 text-sm font-semibold mb-4">
+                <ShieldCheck className="w-4 h-4" /> Enterprise Security
+              </div>
+              <h3 className="text-2xl md:text-3xl font-bold mb-4">
+                Your Privacy is Our Priority
               </h3>
-              <p className="text-lg text-neutral-600 dark:text-neutral-300 max-w-2xl mx-auto">
-                A simple, intelligent 3-step process — designed for speed and
-                clarity.
+              <p className="text-neutral-300 dark:text-neutral-600 leading-relaxed">
+                Files are processed securely in-memory with automatic cleanup.
+                We never store your free conversions permanently.
               </p>
             </div>
 
-            <div className="relative grid md:grid-cols-3 gap-10">
-              <div className="hidden md:block absolute top-[4.6rem] left-1/2 w-[75%] -translate-x-1/2 h-[2px] bg-gradient-to-r from-blue-200/30 dark:from-blue-800/30 via-violet-200/30 dark:via-violet-800/30 to-emerald-200/30 dark:to-emerald-800/30"></div>
-
+            <div className="grid grid-cols-2 gap-4 md:w-auto w-full">
               {[
-                {
-                  step: "1",
-                  title: "Smart Detection",
-                  desc: "Morphly identifies file type and optimizes parameters automatically for best output.",
-                  gradient: "from-blue-500 to-cyan-500",
-                  shadow: "shadow-blue-500/20",
-                },
-                {
-                  step: "2",
-                  title: "AI Processing",
-                  desc: "Our adaptive AI engine enhances clarity, structure, and detail while preserving fidelity.",
-                  gradient: "from-violet-500 to-purple-500",
-                  shadow: "shadow-violet-500/20",
-                },
-                {
-                  step: "3",
-                  title: "Instant Download",
-                  desc: "Your optimized files are ready instantly — no queues, no watermarks, no hassle.",
-                  gradient: "from-emerald-500 to-teal-500",
-                  shadow: "shadow-emerald-500/20",
-                },
-              ].map((card, i) => (
+                { icon: Lock, text: "Encrypted" },
+                { icon: Clock, text: "Auto Delete" },
+                { icon: CheckCircle2, text: "No Logs" },
+                { icon: Database, text: "In-Memory" },
+              ].map((item) => (
                 <div
-                  key={card.step}
-                  className="relative group bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-100 dark:border-neutral-700 p-10 transition-all duration-500 hover:border-transparent hover:shadow-xl hover:shadow-neutral-200/40 dark:hover:shadow-neutral-800/40"
+                  key={item.text}
+                  className="flex items-center gap-3 bg-white/10 dark:bg-neutral-100/50 backdrop-blur-sm p-4 rounded-xl"
                 >
-                  <div
-                    className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${card.gradient} opacity-0 group-hover:opacity-[0.08] transition-opacity`}
-                  ></div>
-                  <div
-                    className={`relative z-10 w-16 h-16 mb-6 mx-auto flex items-center justify-center rounded-2xl bg-gradient-to-br ${card.gradient} shadow-lg ${card.shadow} text-white text-2xl font-bold group-hover:scale-105 transition-transform`}
-                  >
-                    {card.step}
-                  </div>
-                  <h4 className="relative z-10 text-xl font-semibold text-neutral-900 dark:text-white mb-2">
-                    {card.title}
-                  </h4>
-                  <p className="relative z-10 text-neutral-600 dark:text-neutral-300 leading-relaxed">
-                    {card.desc}
-                  </p>
-                  {i < 2 && (
-                    <div className="hidden md:block absolute top-[4.4rem] right-[-1.5rem] w-2 h-2 rounded-full bg-gradient-to-br from-neutral-200 dark:from-neutral-600 to-neutral-300 dark:to-neutral-700"></div>
-                  )}
+                  <item.icon className="w-5 h-5 text-blue-400 dark:text-blue-600" />
+                  <span className="font-semibold text-sm">{item.text}</span>
                 </div>
               ))}
             </div>
           </div>
-        </motion.section>
-
-        <div className="hidden sm:flex items-center justify-center mb-10">
-          <div className="h-px w-32 bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-600 to-transparent" />
-        </div>
-
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.6 }}
-          className="hidden lg:block relative py-24 bg-gradient-to-b from-blue-100/50 dark:from-neutral-900 via-blue-50/30 dark:via-neutral-800 to-white dark:to-neutral-900 rounded-2xl transition-colors"
-        >
-          <div className="relative max-w-6xl mx-auto px-6 text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50/50 dark:bg-blue-900/40 border border-blue-100 dark:border-blue-800 mb-6">
-              <ShieldCheck className="w-4 h-4 text-green-500" />
-              <span className="text-sm font-semibold text-neutral-700 dark:text-neutral-300">
-                Enterprise Security
-              </span>
-            </div>
-
-            <h3 className="text-3xl md:text-4xl font-bold mb-6 tracking-tight text-neutral-900 dark:text-white">
-              Your Privacy is Our Priority
-            </h3>
-            <p className="text-lg text-neutral-600 dark:text-neutral-300 leading-relaxed max-w-3xl mx-auto mb-10">
-              Files are processed securely in-memory with automatic cleanup. We
-              use encrypted HTTPS connections and never store your files
-              permanently.
-            </p>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
-              {[
-                {
-                  icon: Lock,
-                  text: "HTTPS Encryption",
-                  color: "text-green-500",
-                },
-                {
-                  icon: ShieldCheck,
-                  text: "In-Memory Only",
-                  color: "text-blue-500",
-                },
-                { icon: Clock, text: "Auto Cleanup", color: "text-purple-500" },
-                {
-                  icon: CheckCircle,
-                  text: "Zero Storage",
-                  color: "text-yellow-500",
-                },
-              ].map((item) => {
-                const Icon = item.icon;
-                return (
-                  <div
-                    key={item.text}
-                    className="bg-white/80 dark:bg-neutral-900/60 border border-neutral-200 dark:border-neutral-700 rounded-2xl p-6 transition-all duration-300 hover:shadow-lg flex flex-col items-center"
-                  >
-                    <Icon className={`w-8 h-8 ${item.color} mb-3`} />
-                    <p className="text-neutral-900 dark:text-white font-semibold text-sm text-center">
-                      {item.text}
-                    </p>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </motion.section>
+        </motion.div>
       </div>
     </div>
   );

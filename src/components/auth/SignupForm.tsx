@@ -117,8 +117,9 @@ export function SignupForm() {
       </div>
 
       <Button
+        size="lg"
         type="submit"
-        className="w-full bg-blue-600 hover:bg-blue-700 text-white text-base font-medium shadow-md hover:shadow-lg transition"
+        className="w-full font-semibold bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg transition-all duration-300"
         disabled={loading}
       >
         {loading ? "Creating account..." : "Sign Up"}
@@ -132,9 +133,10 @@ export function SignupForm() {
       </div>
 
       <Button
+        size="lg"
         type="button"
         variant="outline"
-        className="w-full flex items-center justify-center gap-2 border-gray-300 dark:border-neutral-700 text-neutral-700 dark:text-neutral-200 hover:bg-gray-50 dark:hover:bg-neutral-800 transition"
+        className="w-full flex items-center justify-center font-semibold bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700 transition-all duration-300"
         onClick={() => signIn("google", { callbackUrl: "/" })}
       >
         <img

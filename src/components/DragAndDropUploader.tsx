@@ -165,6 +165,9 @@ export default function DragAndDropUploader({
         </p>
         <p className="text-xs text-neutral-400 dark:text-neutral-400 mt-1">
           Supported formats: PNG, JPG, PDF, DOCX, etc.
+          <span className="block text-xs mt-1 opacity-70">
+            Max {planFileLimits[userPlan] / 1024 / 1024}MB per file
+          </span>
         </p>
       </div>
 
@@ -197,21 +200,38 @@ export default function DragAndDropUploader({
 
                 <div className="flex items-center gap-3 relative z-10 mt-3 sm:mt-0">
                   {showFormatSelect && (
-                    <select
-                      value={item.format}
-                      onChange={(e) =>
-                        handleFormatChange(index, e.target.value)
-                      }
-                      className="text-sm font-medium text-neutral-700 dark:text-neutral-300 border border-neutral-200 dark:border-neutral-600 bg-white/50 dark:bg-neutral-700 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-500 transition-all cursor-pointer"
-                    >
-                      {getFormatsForFile(item.file.type, item.file.name).map(
-                        (format) => (
-                          <option key={format} value={format}>
-                            {format}
-                          </option>
-                        )
-                      )}
-                    </select>
+                    <div className="relative">
+                      <select
+                        value={item.format}
+                        onChange={(e) =>
+                          handleFormatChange(index, e.target.value)
+                        }
+                        className="appearance-none pl-3 pr-8 py-1.5 text-xs font-semibold text-neutral-700 dark:text-neutral-200 bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/50 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
+                      >
+                        {getFormatsForFile(item.file.type, item.file.name).map(
+                          (format) => (
+                            <option key={format} value={format}>
+                              {format}
+                            </option>
+                          )
+                        )}
+                      </select>
+                      <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none">
+                        <svg
+                          className="w-3 h-3 text-neutral-400"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M19 9l-7 7-7-7"
+                          ></path>
+                        </svg>
+                      </div>
+                    </div>
                   )}
                   <button
                     onClick={() => removeFile(index)}
@@ -228,7 +248,7 @@ export default function DragAndDropUploader({
             <button
               onClick={handleSubmit}
               disabled={loading || files.length === 0}
-              className={`w-64 flex items-center justify-center gap-2 px-5 py-3 text-sm sm:text-base font-semibold rounded-lg transition-all duration-300 shadow-sm
+              className={`flex items-center justify-center gap-2 px-6 py-3 text-base font-semibold bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg transition-all rounded-xl
                 ${
                   loading || files.length === 0
                     ? "bg-blue-300 dark:bg-blue-700 text-white cursor-not-allowed shadow-none"

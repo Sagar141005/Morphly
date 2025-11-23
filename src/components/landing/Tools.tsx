@@ -6,7 +6,7 @@ import {
   Scissors,
   ArrowUpRight,
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 
 const tools = [
   {
@@ -61,7 +61,7 @@ const Tools = () => {
     <section id="tools" className="py-32">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-20">
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-neutral-900 dark:text-white mb-6">
+          <h2 className="text-5xl sm:text-4xl font-bold tracking-tight text-neutral-900 dark:text-white mb-6">
             Explore Our Tools
           </h2>
           <p className="text-lg text-neutral-600 dark:text-neutral-400 leading-relaxed">

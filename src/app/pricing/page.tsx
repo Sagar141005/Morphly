@@ -3,10 +3,10 @@
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import Pricing from "@/components/Pricing";
-import { ArrowUpRight, Check, X, ArrowRight, ChevronDown } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
-import { useLayoutEffect, useRef, useState } from "react";
+import { ArrowUpRight, Check, X } from "lucide-react";
+import { useState } from "react";
+import Accordion from "@/components/landing/Accordion";
+import CTA from "@/components/landing/CTA";
 
 const featureComparison = [
   {
@@ -113,7 +113,7 @@ export default function PricingPage() {
 
       <section className="w-full max-w-6xl mx-auto px-6 py-24">
         <div className="mb-14 text-center">
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-neutral-900 dark:text-white mb-4 tracking-tight">
+          <h1 className="text-5xl sm:text-4xl font-extrabold text-neutral-900 dark:text-white mb-4 tracking-tight">
             Choose Your Plan
           </h1>
           <p className="text-lg text-neutral-600 dark:text-neutral-300 max-w-2xl mx-auto">
@@ -135,7 +135,7 @@ export default function PricingPage() {
             your needs.
           </p>
 
-          <div className="overflow-x-auto rounded-xl border border-neutral-200 dark:border-neutral-800">
+          <div className="overflow-hidden rounded-3xl border border-neutral-200 dark:border-neutral-800">
             <table className="w-full border-collapse">
               <thead>
                 <tr className="bg-blue-50 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 text-sm uppercase tracking-wide">
@@ -208,89 +208,19 @@ export default function PricingPage() {
         </div>
       </section>
 
-      <section className="py-24 bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 text-center text-white relative overflow-hidden">
-        <div className="max-w-3xl mx-auto px-6">
-          <h2 className="text-4xl font-extrabold mb-4">
-            Ready to level up your file workflow?
-          </h2>
-          <p className="text-lg text-blue-100 mb-8">
-            Join thousands of creators and professionals using Morphly to save
-            time and simplify their workflow — securely and instantly.
-          </p>
-          <Button
-            asChild
-            size="lg"
-            className="bg-white text-blue-700 font-semibold hover:bg-blue-50 transition-all"
-          >
-            <a href="/signup" className="flex items-center gap-2">
-              Get Started Now <ArrowRight className="h-5 w-5" />
-            </a>
-          </Button>
-        </div>
-
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_center,_rgba(255,255,255,0.1)_0%,_transparent_70%)]"></div>
-      </section>
+      <CTA />
 
       <section className="py-20 bg-blue-50/30 dark:bg-neutral-900/40 transition-colors">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl font-extrabold text-neutral-900 dark:text-white mb-4">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-4xl text-center font-extrabold text-neutral-900 dark:text-white mb-4">
             Pricing & Billing FAQs
           </h2>
-          <p className="text-lg text-neutral-600 dark:text-neutral-300 mb-16">
+          <p className="text-lg text-center text-neutral-600 dark:text-neutral-300 mb-16">
             Find answers to common questions about plans, payments, and
             subscriptions.
           </p>
 
-          <div className="space-y-6 text-left">
-            {pricingFaqs.map((faq, index) => {
-              const isOpen = openIndex === index;
-              const contentRef = useRef<HTMLDivElement>(null);
-              const [height, setHeight] = useState(0);
-
-              useLayoutEffect(() => {
-                if (contentRef.current) {
-                  setHeight(contentRef.current.scrollHeight);
-                }
-              }, [isOpen, faq.answer]);
-
-              return (
-                <div
-                  key={index}
-                  className="bg-white/80 dark:bg-neutral-900/70 backdrop-blur-sm border border-neutral-100 dark:border-neutral-800 rounded-xl shadow-sm overflow-hidden"
-                >
-                  <button
-                    onClick={() => toggle(index)}
-                    className="w-full flex justify-between items-center p-6 text-left focus:outline-none"
-                  >
-                    <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">
-                      {faq.question}
-                    </h3>
-                    <ChevronDown
-                      className={`h-5 w-5 text-neutral-600 dark:text-neutral-300 transition-transform duration-300 ${
-                        isOpen ? "rotate-180" : ""
-                      }`}
-                    />
-                  </button>
-
-                  <motion.div
-                    animate={{
-                      height: isOpen ? height : 0,
-                      opacity: isOpen ? 1 : 0,
-                    }}
-                    transition={{ duration: 0.3, ease: "easeInOut" }}
-                    style={{ overflow: "hidden" }}
-                  >
-                    <div
-                      ref={contentRef}
-                      className="px-6 pb-6 text-neutral-600 dark:text-neutral-300 text-sm"
-                    >
-                      {faq.answer}
-                    </div>
-                  </motion.div>
-                </div>
-              );
-            })}
-          </div>
+          <Accordion items={pricingFaqs} />
 
           <p className="text-center mt-12 text-neutral-500 dark:text-neutral-300">
             Didn’t find what you’re looking for?{" "}

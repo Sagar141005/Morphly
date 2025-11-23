@@ -3,7 +3,7 @@
 import { useState } from "react";
 import DragAndDropUploader from "@/components/DragAndDropUploader";
 import type { UploadFile } from "@/types/type";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import Footer from "@/components/Footer";
 import ConversionOverview from "@/components/ConversionOverview";
 import { Scissors } from "lucide-react";
@@ -55,18 +55,14 @@ export default function SplitPDFPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white via-blue-50/30 to-blue-100/10 dark:from-black dark:via-neutral-900 dark:to-neutral-950 flex flex-col transition-colors">
+    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 flex flex-col transition-colors selection:bg-blue-100 dark:selection:bg-blue-900">
       <Navbar />
 
-      <main className="flex-grow relative">
-        <div
-          className="
-            absolute -top-10 left-1/2 -translate-x-1/2
-            w-[400px] h-[400px] sm:w-[550px] sm:h-[550px] md:w-[700px] md:h-[700px]
-            bg-blue-200/40 dark:bg-blue-900/20
-            blur-[120px] rounded-full pointer-events-none
-          "
-        />
+      <main className="flex-grow relative overflow-hidden">
+        <div className="absolute inset-0 z-0 pointer-events-none">
+          <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-blue-100/50 dark:bg-blue-900/20 rounded-full blur-[100px] opacity-60" />
+          <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-indigo-100/40 dark:bg-indigo-900/20 rounded-full blur-[120px] opacity-40" />
+        </div>
 
         <section className="relative pt-36 pb-20 text-center overflow-hidden px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -75,7 +71,7 @@ export default function SplitPDFPage() {
             transition={{ duration: 0.6 }}
             className="max-w-3xl mx-auto"
           >
-            <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-neutral-900 dark:text-white mb-4">
+            <h1 className="text-5xl sm:text-4xl font-extrabold tracking-tight text-neutral-900 dark:text-white mb-4">
               Split Your File <br />
               <span className="text-blue-600 dark:text-blue-400">
                 Easily & Quickly

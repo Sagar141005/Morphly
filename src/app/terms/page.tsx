@@ -1,8 +1,9 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { Calendar } from "lucide-react";
 
 export default function Terms() {
   const sections = [
@@ -118,43 +119,91 @@ export default function Terms() {
     },
   ];
 
+  const renderContent = (text: string) => {
+    return text.split("\n").map((line, i) => {
+      const trimmed = line.trim();
+      if (trimmed.startsWith("•")) {
+        return (
+          <li key={i} className="flex items-start gap-2 mb-2 ml-2">
+            <span className="text-blue-500 mt-1.5 h-1.5 w-1.5 rounded-full bg-blue-500 flex-shrink-0" />
+            <span>{trimmed.substring(1).trim()}</span>
+          </li>
+        );
+      }
+      if (!trimmed) return <div key={i} className="h-2" />;
+      return (
+        <p key={i} className="mb-2">
+          {trimmed}
+        </p>
+      );
+    });
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-blue-50/30 dark:from-black dark:to-neutral-900 antialiased">
+    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 antialiased transition-colors">
       <Navbar />
 
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-28">
-        <motion.h1
-          initial={{ opacity: 0, y: 25 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7 }}
-          className="text-5xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-neutral-900 dark:text-white text-center mb-6"
-        >
-          Terms and Conditions
-        </motion.h1>
+      <main className="relative py-32 px-4 sm:px-6 lg:px-8">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-blue-100/40 dark:bg-blue-900/10 rounded-full blur-[100px] opacity-60" />
+        </div>
 
-        <p className="text-center text-neutral-600 dark:text-neutral-300 mb-16">
-          Last Updated: November 2025
-          <br />
-          Welcome to Morphly. By accessing or using our Service, you agree to
-          the following Terms and Conditions. Please read them carefully.
-        </p>
+        <div className="relative z-10 max-w-3xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
+            <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-neutral-900 dark:text-white mb-6">
+              Terms and Conditions
+            </h1>
 
-        <div className="space-y-10">
-          {sections.map((section, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: index * 0.1 }}
-            >
-              <h2 className="text-2xl font-bold text-neutral-900 dark:text-white mb-3">
-                {section.title}
-              </h2>
-              <p className="text-neutral-600 dark:text-neutral-300 whitespace-pre-line leading-relaxed">
-                {section.content}
+            <div className="flex items-center justify-center gap-2 text-sm font-medium text-neutral-500 dark:text-neutral-400 bg-white/50 dark:bg-neutral-900/50 backdrop-blur-sm border border-neutral-200 dark:border-neutral-800 rounded-full px-4 py-1.5 w-fit mx-auto">
+              <Calendar className="w-3.5 h-3.5" />
+              <span>Last Updated: November 2025</span>
+            </div>
+
+            <p className="mt-8 text-lg text-neutral-600 dark:text-neutral-300 leading-relaxed max-w-2xl mx-auto">
+              Welcome to Morphly. By accessing or using our Service, you agree
+              to the following Terms and Conditions. Please read them carefully.
+            </p>
+          </motion.div>
+
+          <div className="bg-white dark:bg-neutral-900 rounded-3xl shadow-xl shadow-neutral-200/50 dark:shadow-none border border-neutral-200 dark:border-neutral-800 overflow-hidden">
+            <div className="p-8 sm:p-12 space-y-12">
+              {sections.map((section, index) => (
+                <motion.section
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-50px" }}
+                  transition={{ duration: 0.5, delay: index * 0.05 }}
+                  className="relative pl-4"
+                >
+                  <h2 className="text-xl font-bold text-neutral-900 dark:text-white mb-4 flex items-center gap-2">
+                    {section.title}
+                  </h2>
+
+                  <div className="text-neutral-600 dark:text-neutral-400 leading-relaxed text-base">
+                    {renderContent(section.content)}
+                  </div>
+                </motion.section>
+              ))}
+            </div>
+
+            <div className="bg-neutral-50 dark:bg-neutral-800/50 p-6 text-center border-t border-neutral-200 dark:border-neutral-800">
+              <p className="text-sm text-neutral-500 dark:text-neutral-400">
+                Questions about these terms?{" "}
+                <a
+                  href="/contact"
+                  className="text-blue-600 dark:text-blue-400 font-semibold hover:underline"
+                >
+                  Contact Support
+                </a>
               </p>
-            </motion.div>
-          ))}
+            </div>
+          </div>
         </div>
       </main>
 

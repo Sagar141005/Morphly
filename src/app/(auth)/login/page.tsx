@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { useSession } from "next-auth/react";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { redirect } from "next/navigation";
 import { useEffect } from "react";
 
@@ -19,7 +19,7 @@ export default function LoginPage() {
   if (status === "loading") return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-blue-50/30 dark:from-black dark:to-neutral-900 flex flex-col lg:flex-row">
+    <div className="min-h-screen bg-white dark:bg-neutral-950 flex flex-col lg:flex-row">
       <div className="flex flex-col justify-center items-center w-full lg:w-1/2 px-6 sm:px-10 py-16 relative">
         <Link
           href="/"

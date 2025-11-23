@@ -55,7 +55,7 @@ export default async function DashboardPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-b from-white via-blue-50/40 to-white">
+    <div className="min-h-screen flex flex-col bg-white dark:bg-neutral-950 antialiased">
       <Navbar />
       <DashboardClient initialFiles={files} stats={stats} />
       <Footer />

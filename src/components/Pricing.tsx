@@ -161,10 +161,10 @@ export default function Pricing() {
           <Card
             key={plan.id}
             className={cn(
-              "flex flex-col justify-between rounded-xl shadow-lg border border-transparent transition transform hover:scale-102 hover:shadow-xl dark:hover:shadow-neutral-700",
+              "bg-neutral-50 dark:bg-neutral-900 flex flex-col justify-between rounded-3xl shadow-lg border border-transparent transition transform hover:scale-102 hover:shadow-xl dark:hover:shadow-neutral-700",
               plan.popular
                 ? "ring-2 ring-blue-500 dark:ring-blue-400"
-                : "bg-white dark:bg-neutral-900 hover:ring-2 hover:ring-blue-200 dark:hover:ring-blue-300"
+                : "hover:ring-2 hover:ring-blue-200 dark:hover:ring-blue-300"
             )}
           >
             <CardHeader className="mb-4">
@@ -181,24 +181,33 @@ export default function Pricing() {
               </CardDescription>
               <div className="mt-4">
                 {typeof plan.price[frequency] === "number" ? (
-                  <div className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 flex items-baseline justify-center">
-                    <NumberFlow
-                      value={plan.price[frequency] as number}
-                      format={{
-                        style: "currency",
-                        currency: "USD",
-                        maximumFractionDigits: 2,
-                      }}
-                    />
-                    <span className="text-sm text-neutral-500 dark:text-neutral-400 ml-1">
-                      /month
+                  <div className="flex items-baseline gap-1">
+                    <span className="text-4xl font-extrabold text-neutral-900 dark:text-white tracking-tight">
+                      <NumberFlow
+                        value={plan.price[frequency] as number}
+                        format={{
+                          style: "currency",
+                          currency: "USD",
+                          maximumFractionDigits: 2,
+                        }}
+                      />
+                    </span>
+                    <span className="text-neutral-500 dark:text-neutral-400 font-medium">
+                      /mo
                     </span>
                   </div>
                 ) : (
-                  <div className="text-2xl font-bold text-neutral-900 dark:text-neutral-100 text-center">
+                  <div className="text-4xl font-extrabold text-neutral-900 dark:text-white tracking-tight">
                     {plan.price[frequency]}
                   </div>
                 )}
+                {frequency === "yearly" &&
+                  typeof plan.price.monthly === "number" && (
+                    <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-2 font-medium">
+                      Billed ${((plan.price.yearly as number) * 12).toFixed(2)}{" "}
+                      yearly
+                    </p>
+                  )}
               </div>
             </CardHeader>
 
@@ -217,12 +226,13 @@ export default function Pricing() {
 
             <CardFooter>
               <Button
+                size="lg"
                 onClick={() => handleCheckout(plan.id)}
                 className={cn(
-                  "w-full mt-4",
+                  "w-full mt-4 transition-all duration-300 cursor-pointer",
                   plan.popular
-                    ? "bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white"
-                    : "bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 text-neutral-800 dark:text-neutral-200 hover:bg-blue-50 dark:hover:bg-neutral-700"
+                    ? "bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg"
+                    : "bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700"
                 )}
               >
                 {plan.cta}
