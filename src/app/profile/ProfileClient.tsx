@@ -22,6 +22,7 @@ import ConfirmModal from "@/components/ConfirmModal";
 import { useUserStore } from "@/stores/userStore";
 import Loader from "@/components/Loader";
 import toast from "react-hot-toast";
+import ChangePasswordModal from "@/components/ChangePasswordModal";
 
 interface UserFile {
   id: string;
@@ -47,12 +48,13 @@ export default function ProfileClient({ user }: { user: User }) {
   const { user: storedUser, setUser } = useUserStore();
 
   const [allFiles, setAllFiles] = useState<UserFile[]>(user.allFiles);
-  const [editing, setEditing] = useState(false);
-  const [saving, setSaving] = useState(false);
   const [name, setName] = useState(user.name || "");
   const [profilePicFile, setProfilePicFile] = useState<File | null>(null);
-  const [modalOpen, setModalOpen] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [fileToDelete, setFileToDelete] = useState<string | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [passwordModalOpen, setPasswordModalOpen] = useState(false);
 
   const files = allFiles.slice(0, 10);
 
@@ -396,7 +398,10 @@ export default function ProfileClient({ user }: { user: User }) {
                   </p>
                 </div>
               </div>
-              <button className="whitespace-nowrap px-5 py-2.5 rounded-xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-800 hover:text-red-600 dark:hover:text-red-400 font-medium text-sm transition-all shadow-sm">
+              <button
+                onClick={() => setPasswordModalOpen(true)}
+                className="whitespace-nowrap px-5 py-2.5 rounded-xl bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 text-neutral-700 dark:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-800 hover:text-red-600 dark:hover:text-red-400 font-medium text-sm transition-all shadow-sm"
+              >
                 Change Password
               </button>
             </div>
@@ -411,6 +416,13 @@ export default function ProfileClient({ user }: { user: User }) {
         onCancel={() => setModalOpen(false)}
         action="Delete"
       />
+
+      {user.hashedPassword && (
+        <ChangePasswordModal
+          isOpen={passwordModalOpen}
+          onClose={() => setPasswordModalOpen(false)}
+        />
+      )}
     </>
   );
 }
