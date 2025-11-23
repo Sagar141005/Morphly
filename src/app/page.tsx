@@ -4,8 +4,6 @@ import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { motion } from "motion/react";
 import DragAndDropUploader from "@/components/DragAndDropUploader";
-import Lottie from "lottie-react";
-import morphingAnimation from "../../public/animations/morphing-animation.json";
 import Pricing from "@/components/Pricing";
 import { UploadFile } from "@/types/type";
 import Footer from "@/components/Footer";
@@ -16,6 +14,7 @@ import Accordion from "@/components/landing/Accordion";
 import Features from "@/components/landing/Features";
 import Tools from "@/components/landing/Tools";
 import CTA from "@/components/landing/CTA";
+import MorphingLottie from "@/components/Animation";
 
 const faqs = [
   {
@@ -149,12 +148,7 @@ export default function Home() {
               <div className="absolute left-1/2 -translate-x-1/2 top-[70%] w-[160px] sm:w-[200px] md:w-[200px] h-[160px] sm:h-[200px] md:h-[200px] bg-blue-200/40 dark:bg-blue-500/10 blur-3xl rounded-full"></div>
 
               <div className="w-[200px] sm:w-[180px] lg:w-[300px]">
-                <Lottie
-                  animationData={morphingAnimation}
-                  loop
-                  autoplay
-                  className="drop-shadow-lg"
-                />
+                <MorphingLottie />
               </div>
             </motion.div>
           </div>
