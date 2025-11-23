@@ -1,11 +1,8 @@
 services:
   app:
-    build: .
+    build: ./app
     ports:
       - "3000:3000"
-    volumes:
-      - .:/app
-      - /app/node_modules
 
   python:
     build: ./python
@@ -19,7 +16,12 @@ services:
 
   db:
     image: postgres:15-alpine
+    environment:
+      POSTGRES_PASSWORD: password
     ports:
       - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

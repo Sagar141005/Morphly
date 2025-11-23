@@ -1,6 +1,5 @@
 FROM ubuntu:22.04
 
-# Install LibreOffice and required utilities
 RUN apt-get update && apt-get install -y \
     libreoffice \
     libreoffice-writer \
@@ -9,9 +8,9 @@ RUN apt-get update && apt-get install -y \
     libreoffice-core \
     fonts-dejavu \
     poppler-utils \
-    unzip \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    unzip && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 WORKDIR /data
 
