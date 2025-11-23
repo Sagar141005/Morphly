@@ -6,15 +6,22 @@ import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import type { UploadFile } from "@/types/type";
 import { motion } from "motion/react";
-import { Images } from "lucide-react";
+import { Download, FileImage, Images } from "lucide-react";
 import toast from "react-hot-toast";
+import { useState } from "react";
 
 const getImageFormats = (type: string, name: string) => {
   return ["PNG", "JPG", "WEBP"];
 };
 
 export default function ImageConversionPage() {
+  const [convertedFiles, setConvertedFiles] = useState<string[]>([]);
+
   const handleConvert = async (files: UploadFile[]) => {
+    setConvertedFiles([]);
+
+    const output: string[] = [];
+
     for (const item of files) {
       const formData = new FormData();
       formData.append("file", item.file);
@@ -30,30 +37,18 @@ export default function ImageConversionPage() {
 
         if (!res.ok) {
           const errorData = await res.json();
-          toast.error(`Error: ${errorData.error}`);
+          toast.error(errorData.error || "Failed to convert");
           continue;
         }
 
-        const contentDisposition = res.headers.get("Content-Disposition");
-
-        if (contentDisposition?.includes("attachment")) {
-          const blob = await res.blob();
-          const url = URL.createObjectURL(blob);
-          const link = document.createElement("a");
-          link.href = url;
-          link.download = `converted.${(item.format ?? "txt").toLowerCase()}`;
-          document.body.appendChild(link);
-          link.click();
-          link.remove();
-        } else {
-          const data = await res.json();
-          window.open(data.url, "_blank");
-        }
+        const data = await res.json();
+        output.push(data.url);
       } catch (err) {
-        console.error("Conversion failed:", err);
         toast.error("Something went wrong.");
       }
     }
+
+    setConvertedFiles(output);
   };
 
   return (
@@ -112,6 +107,87 @@ export default function ImageConversionPage() {
                 buttonLabel="Convert Files"
                 getFormatsForFile={getImageFormats}
               />
+
+              {convertedFiles.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0, y: 20 }}
+                  animate={{ opacity: 1, height: "auto", y: 0 }}
+                  exit={{ opacity: 0, height: 0, y: -20 }}
+                  className="mt-10 flex justify-center"
+                >
+                  <div
+                    className="
+                 relative w-full max-w-xl
+                 bg-white/60 dark:bg-neutral-900/60
+                 backdrop-blur-xl 
+                 border border-white/50 dark:border-neutral-700
+                 shadow-lg rounded-3xl p-6 text-center overflow-hidden
+               "
+                  >
+                    <h3 className="text-lg font-semibold text-neutral-800 dark:text-white mb-3">
+                      Conversion Complete!
+                    </h3>
+
+                    <p className="text-sm text-neutral-600 dark:text-neutral-300 mb-6">
+                      Your image has been processed and is ready for download.
+                    </p>
+
+                    <div className="flex flex-col items-center justify-center">
+                      <div
+                        className="
+                     flex items-center justify-center 
+                     w-16 h-16 rounded-full 
+                     bg-blue-50 dark:bg-blue-900/30 
+                     border border-blue-100 dark:border-neutral-700 mb-4
+                   "
+                      >
+                        <FileImage className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+                      </div>
+
+                      <span className="text-sm font-medium text-neutral-700 dark:text-neutral-200 mb-4">
+                        Converted Image Ready
+                      </span>
+
+                      <div className="space-y-3 mb-6">
+                        {convertedFiles.map((url, index) => (
+                          <a
+                            key={index}
+                            href={url}
+                            download
+                            className="
+              flex items-center justify-center gap-2 w-full h-10 rounded-xl 
+              px-6 py-3 text-base font-semibold bg-blue-600 hover:bg-blue-700 
+              text-white shadow-md hover:shadow-lg transition-all duration-300
+            "
+                          >
+                            <Download className="w-4 h-4" />
+                            Download File {index + 1}
+                          </a>
+                        ))}
+                      </div>
+
+                      {/* BUTTONS */}
+                      <div className="flex flex-col sm:flex-row justify-center gap-3">
+                        <button
+                          onClick={() => setConvertedFiles([])}
+                          className="
+            flex items-center justify-center gap-2 h-10 rounded-xl 
+            px-6 py-3 text-base font-semibold bg-white dark:bg-neutral-900 
+            border border-neutral-200 dark:border-neutral-800 
+            text-neutral-700 dark:text-neutral-300 
+            hover:bg-neutral-50 dark:hover:bg-neutral-800 
+            hover:border-neutral-300 dark:hover:border-neutral-700
+            transition-all duration-300
+          "
+                        >
+                          <Images className="w-4 h-4 text-neutral-600 dark:text-neutral-300" />
+                          Convert Another Image
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
 
               <ConversionOverview />
             </motion.div>

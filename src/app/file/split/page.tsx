@@ -54,6 +54,31 @@ export default function SplitPDFPage() {
     }
   };
 
+  const handleDownloadAll = async () => {
+    try {
+      const JSZip = (await import("jszip")).default;
+      const zip = new JSZip();
+
+      for (let i = 0; i < resultFiles.length; i++) {
+        const fileUrl = resultFiles[i];
+        const res = await fetch(fileUrl);
+        const blob = await res.blob();
+        zip.file(`page-${i + 1}.pdf`, blob);
+      }
+
+      const zipped = await zip.generateAsync({ type: "blob" });
+
+      const url = window.URL.createObjectURL(zipped);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "split-pages.zip";
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      toast.error("Failed to create ZIP");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 flex flex-col transition-colors selection:bg-blue-100 dark:selection:bg-blue-900">
       <Navbar />
@@ -124,27 +149,36 @@ export default function SplitPDFPage() {
                     Choose pages to split:
                   </h4>
 
-                  <div className="relative mb-4">
-                    <select
-                      className="
-                        w-full rounded-lg border border-neutral-200 dark:border-neutral-700
-                        bg-white/60 dark:bg-neutral-900/70
-                        backdrop-blur-sm px-3 py-2.5
-                        text-neutral-700 dark:text-neutral-200
-                        shadow-sm focus:outline-none focus:ring-2
-                        focus:ring-blue-300/60 dark:focus:ring-blue-700/40
-                        transition-all duration-200
-                      "
-                      value={pageSelection}
-                      onChange={(e) => setPageSelection(e.target.value)}
-                    >
-                      <option value="all">All pages</option>
-                      <option value="single">Single Page</option>
-                      <option value="range">Page Range</option>
-                      <option value="custom">
-                        Custom Selection (e.g., 1,3,6–8)
-                      </option>
-                    </select>
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div className="relative sm:col-span-2 py-2">
+                      <select
+                        className="w-full appearance-none rounded-lg border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-800 px-4 py-2.5 text-sm text-neutral-700 dark:text-neutral-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all cursor-pointer"
+                        value={pageSelection}
+                        onChange={(e) => setPageSelection(e.target.value)}
+                      >
+                        <option value="all">Split All Pages</option>
+                        <option value="single">Extract Single Page</option>
+                        <option value="range">Extract Page Range</option>
+                        <option value="custom">
+                          Custom Selection (e.g. 1,3,5)
+                        </option>
+                      </select>
+                      <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                        <svg
+                          className="w-4 h-4 text-neutral-400"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M19 9l-7 7-7-7"
+                          ></path>
+                        </svg>
+                      </div>
+                    </div>
                   </div>
 
                   {pageSelection !== "all" && (
@@ -185,20 +219,11 @@ export default function SplitPDFPage() {
                       relative w-full max-w-xl
                       bg-white/60 dark:bg-neutral-900/60
                       backdrop-blur-xl border border-white/50 dark:border-neutral-700
-                      shadow-lg rounded-2xl p-6 text-center overflow-hidden
+                      shadow-lg rounded-3xl p-6 text-center overflow-hidden
                     "
                   >
-                    <div
-                      className="
-                        absolute inset-0 -z-10
-                        bg-gradient-to-b from-sky-100/60 via-blue-50/40 to-indigo-100/30
-                        dark:from-sky-900/20 dark:via-blue-900/10 dark:to-indigo-900/10
-                        rounded-2xl blur-xl opacity-80
-                      "
-                    />
-
                     <h3 className="text-lg font-semibold text-neutral-800 dark:text-neutral-100 mb-3">
-                      Split Complete 🎉
+                      Split Complete!
                     </h3>
 
                     <p className="text-sm text-neutral-600 dark:text-neutral-300 mb-6">
@@ -222,42 +247,34 @@ export default function SplitPDFPage() {
                         Split Files Ready
                       </span>
 
-                      <div className="space-y-2 w-full max-h-64 overflow-y-auto px-2 sm:px-4">
-                        {resultFiles.map((file, idx) => (
-                          <a
-                            key={idx}
-                            href={file}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="
-                              block w-full text-sm 
-                              text-blue-600 dark:text-blue-400
-                              font-medium border border-neutral-200 dark:border-neutral-700
-                              rounded-lg px-4 py-2
-                              hover:bg-blue-50 dark:hover:bg-neutral-800
-                              transition-all
-                            "
-                          >
-                            Download Page {idx + 1}
-                          </a>
-                        ))}
-                      </div>
+                      <div className="flex flex-col sm:flex-row justify-center gap-3 w-full">
+                        <button
+                          onClick={handleDownloadAll}
+                          className="
+    flex items-center justify-center gap-2 h-10 rounded-xl px-6 py-3
+    text-base font-semibold bg-blue-600 hover:bg-blue-700 text-white
+    shadow-md hover:shadow-lg transition-all duration-300 w-full sm:w-auto
+  "
+                        >
+                          Download All Pages (ZIP)
+                        </button>
 
-                      <button
-                        onClick={() => setResultFiles([])}
-                        className="
-                          mt-5 inline-flex items-center justify-center gap-2
-                          px-5 py-2.5 rounded-lg
-                          bg-white dark:bg-neutral-900
-                          text-neutral-700 dark:text-neutral-300
-                          border border-neutral-300 dark:border-neutral-700
-                          font-medium hover:bg-neutral-50 dark:hover:bg-neutral-800
-                          transition-all
-                        "
-                      >
-                        <Scissors className="w-4 h-4 text-neutral-600 dark:text-neutral-300" />
-                        Split Another File
-                      </button>
+                        <button
+                          onClick={() => setResultFiles([])}
+                          className="
+    flex items-center justify-center gap-2 h-10 rounded-xl px-6 py-3
+    text-base font-semibold bg-white dark:bg-neutral-900
+    border border-neutral-200 dark:border-neutral-800
+    text-neutral-700 dark:text-neutral-300
+    hover:bg-neutral-50 dark:hover:bg-neutral-800
+    hover:border-neutral-300 dark:hover:border-neutral-700
+    transition-all duration-300 w-full sm:w-auto
+  "
+                        >
+                          <Scissors className="w-4 h-4 text-neutral-600 dark:text-neutral-300" />
+                          Split Another File
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </motion.div>

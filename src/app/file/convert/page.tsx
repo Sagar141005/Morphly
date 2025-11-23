@@ -122,9 +122,9 @@ export default function MergePDFPage() {
               />
               {resultURL && (
                 <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6 }}
+                  initial={{ opacity: 0, height: 0, y: 20 }}
+                  animate={{ opacity: 1, height: "auto", y: 0 }}
+                  exit={{ opacity: 0, height: 0, y: -20 }}
                   className="mt-10 flex justify-center"
                 >
                   <div
@@ -133,26 +133,16 @@ export default function MergePDFPage() {
                     bg-white/60 dark:bg-neutral-900/60
                     backdrop-blur-xl 
                     border border-white/50 dark:border-neutral-700
-                    shadow-lg rounded-2xl p-6 text-center overflow-hidden
+                    shadow-lg rounded-3xl p-6 text-center overflow-hidden
                   "
                   >
-                    <div
-                      className="
-                      absolute inset-0 -z-10 
-                      bg-gradient-to-b 
-                      from-sky-100/60 via-blue-50/40 to-indigo-100/30
-                      dark:from-sky-900/20 dark:via-blue-900/10 dark:to-indigo-900/10
-                      rounded-2xl blur-xl opacity-80
-                    "
-                    />
-
                     <h3 className="text-lg font-semibold text-neutral-800 dark:text-white mb-3">
-                      Conversion Complete 🎉
+                      Conversion Complete!
                     </h3>
 
                     <p className="text-sm text-neutral-600 dark:text-neutral-300 mb-6">
-                      Your file has been successfully converted. You can
-                      download it below.
+                      Your document has been processed and is ready for
+                      download.
                     </p>
 
                     <div className="flex flex-col items-center justify-center">
@@ -176,12 +166,7 @@ export default function MergePDFPage() {
                           href={resultURL}
                           download
                           className="
-                            inline-flex items-center justify-center gap-2
-                            px-5 py-2.5 rounded-lg 
-                            bg-blue-600 dark:bg-blue-500 
-                            text-white font-medium 
-                            hover:bg-blue-700 dark:hover:bg-blue-600
-                            transition-all shadow-sm
+                           flex items-center justify-center gap-2 h-10 rounded-xl px-6 py-3 text-base font-semibold bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg transition-all duration-300
                           "
                         >
                           <Download className="w-4 h-4" />
@@ -191,13 +176,7 @@ export default function MergePDFPage() {
                         <button
                           onClick={() => setResultURL(null)}
                           className="
-                            inline-flex items-center justify-center gap-2
-                            px-5 py-2.5 rounded-lg 
-                            bg-white dark:bg-neutral-900
-                            text-neutral-700 dark:text-neutral-300 
-                            border border-neutral-300 dark:border-neutral-700 
-                            font-medium hover:bg-neutral-50 dark:hover:bg-neutral-800
-                            transition-all
+                           flex items-center justify-center gap-2 h-10 rounded-xl px-6 py-3 text-base font-semibold bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 text-neutral-700 dark:text-neutral-300 hover:bg-neutral-50 dark:hover:bg-neutral-800 hover:border-neutral-300 dark:hover:border-neutral-700 transition-all duration-300
                           "
                         >
                           <FileText className="w-4 h-4 text-neutral-600 dark:text-neutral-300" />
