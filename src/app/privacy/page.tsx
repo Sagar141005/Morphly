@@ -137,7 +137,6 @@ Continued use of the Service means you accept the updated terms.`,
     },
   ];
 
-  // Helper to render bullet points
   const renderContent = (text: string) => {
     return text.split("\n").map((line, i) => {
       const trimmed = line.trim();

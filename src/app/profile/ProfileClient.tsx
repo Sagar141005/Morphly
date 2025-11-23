@@ -11,7 +11,6 @@ import {
   Mail,
   Calendar,
   Lock,
-  Download,
   ShieldCheck,
   HardDrive,
   Clock,

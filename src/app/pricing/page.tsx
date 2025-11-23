@@ -4,7 +4,6 @@ import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import Pricing from "@/components/Pricing";
 import { ArrowUpRight, Check, X } from "lucide-react";
-import { useState } from "react";
 import Accordion from "@/components/landing/Accordion";
 import CTA from "@/components/landing/CTA";
 
@@ -93,12 +92,6 @@ const pricingFaqs = [
 ];
 
 export default function PricingPage() {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
-
-  const toggle = (index: number) => {
-    setOpenIndex(openIndex === index ? null : index);
-  };
-
   return (
     <main
       className="

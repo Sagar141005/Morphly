@@ -3,7 +3,7 @@
 import { motion } from "motion/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Plus, ArrowRight, Layers, Sparkles, Upload } from "lucide-react";
+import { Plus, Layers, Upload } from "lucide-react";
 import StorageCard from "@/components/dashboard/StorageCard";
 import PlanCard from "@/components/dashboard/PlanCard";
 import StatsCard from "@/components/dashboard/StatsCard";
