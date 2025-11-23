@@ -25,7 +25,6 @@ export default function CTA() {
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          {/* Primary Button */}
           <Button
             asChild
             size="lg"
@@ -41,7 +40,6 @@ export default function CTA() {
             </Link>
           </Button>
 
-          {/* Secondary Button */}
           <Button
             asChild
             size="lg"
@@ -58,7 +56,6 @@ export default function CTA() {
         </div>
       </div>
 
-      {/* Background Texture */}
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_center,_rgba(255,255,255,0.15)_0%,_transparent_70%)] pointer-events-none mix-blend-overlay"></div>
     </section>
   );

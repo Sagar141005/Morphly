@@ -9,7 +9,6 @@ import {
   Globe,
 } from "lucide-react";
 
-// 1. Refactored Data with explicit 'badge' property
 const features = [
   {
     icon: Zap,
@@ -20,7 +19,7 @@ const features = [
     bgColor: "bg-indigo-50 dark:bg-indigo-900/20",
     gradient: "from-indigo-500/10",
     colSpan: "lg:col-span-2",
-    badge: "Free", // Unique Value Prop
+    badge: "Free",
   },
   {
     icon: HardDrive,
@@ -51,7 +50,7 @@ const features = [
     color: "text-orange-600 dark:text-orange-400",
     bgColor: "bg-orange-50 dark:bg-orange-900/20",
     gradient: "from-orange-500/10",
-    badge: "Core", // Available to all
+    badge: "Core",
   },
   {
     icon: Layers,
@@ -61,7 +60,7 @@ const features = [
     color: "text-teal-600 dark:text-teal-400",
     bgColor: "bg-teal-50 dark:bg-teal-900/20",
     gradient: "from-teal-500/10",
-    badge: "Core", // Available to all
+    badge: "Core",
   },
   {
     icon: LayoutDashboard,
@@ -83,7 +82,7 @@ const features = [
     bgColor: "bg-purple-50 dark:bg-purple-900/20",
     gradient: "from-purple-500/10",
     colSpan: "lg:col-span-2",
-    badge: "Core", // Available to all
+    badge: "Core",
   },
   {
     icon: Globe,
@@ -93,23 +92,21 @@ const features = [
     color: "text-amber-600 dark:text-amber-400",
     bgColor: "bg-amber-50 dark:bg-amber-900/20",
     gradient: "from-amber-500/10",
-    badge: "Core", // Available to all
+    badge: "Core",
   },
 ];
 
-// 2. Render logic for badges
 const getBadgeStyles = (badge: string) => {
   switch (badge) {
     case "Plus":
       return "bg-neutral-900 text-white dark:bg-white dark:text-black shadow-md shadow-neutral-900/20";
     case "Free":
       return "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300";
-    default: // Core
+    default:
       return "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400";
   }
 };
 
-// 3. Component
 const Features = () => {
   return (
     <section id="features" className="py-24">
@@ -138,7 +135,6 @@ const Features = () => {
                   ${feature.rowSpan || ""}
                 `}
             >
-              {/* Hover Gradient Reveal */}
               <div
                 className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none`}
               />
@@ -151,7 +147,6 @@ const Features = () => {
                     <feature.icon className={`w-6 h-6 ${feature.color}`} />
                   </div>
 
-                  {/* Dynamic Badge */}
                   <span
                     className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold tracking-wide ${getBadgeStyles(
                       feature.badge
@@ -170,7 +165,6 @@ const Features = () => {
                 </p>
               </div>
 
-              {/* Background Icon Texture for Visual Depth */}
               {(feature.colSpan || feature.rowSpan) && (
                 <div className="absolute bottom-0 right-0 p-6 opacity-[0.03] dark:opacity-[0.05] pointer-events-none transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-12">
                   <feature.icon className="w-32 h-32 -mb-10 -mr-10 text-neutral-900 dark:text-white" />
