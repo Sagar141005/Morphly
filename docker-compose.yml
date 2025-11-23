@@ -1,0 +1,25 @@
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+
+  python:
+    build: ./python
+    ports:
+      - "5001:5001"
+
+  libreoffice:
+    build: ./libreoffice
+    ports:
+      - "5002:5002"
+
+  db:
+    image: postgres:15-alpine
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
