@@ -8,11 +8,11 @@ import { prisma } from "@/lib/prisma";
 import { uploadToSupabase } from "@/lib/supabase";
 import { Document, Packer, Paragraph } from "docx";
 import { PdfReader } from "pdfreader";
-import { convertWithLibreOffice } from "@/lib/libreoffice";
 import FormData from "form-data";
 import axios from "axios";
 
 const readFile = promisify(fs.readFile);
+const PYTHON_SERVICE_URL = process.env.PYTHON_SERVICE_URL;
 
 const planFileLimits: Record<string, number> = {
   FREE: 10 * 1024 * 1024,
@@ -73,41 +73,36 @@ export default async function handler(
   const outputFilename = `converted.${targetFormat}`;
 
   try {
-    // --------- PDF to DOCX via Python microservice ---------
-    if (mimetype.includes("pdf") && targetFormat === "docx") {
+    const createServiceFormData = () => {
       const formData = new FormData();
       formData.append(
         "file",
         fs.createReadStream(file.filepath),
-        file.originalFilename ?? "upload.pdf"
+        file.originalFilename ?? "upload"
       );
+      return formData;
+    };
 
-      console.log("Sending file:", file.originalFilename, "size:", file.size);
+    // --------- PDF to DOCX via Python microservice ---------
+    if (mimetype.includes("pdf") && targetFormat === "docx") {
+      const formData = createServiceFormData();
+      console.log("Sending PDF->DOCX to Python service");
 
       try {
         const response = await axios.post(
-          "http://localhost:5001/convert/pdf2docx",
+          `${PYTHON_SERVICE_URL}/convert/pdf2docx`,
           formData,
           {
             headers: formData.getHeaders(),
             responseType: "arraybuffer",
           }
         );
-
         outputBuffer = Buffer.from(response.data);
       } catch (error: any) {
-        console.error(
-          "Python service response:",
-          error.response?.data || error.message
-        );
-        throw new Error(
-          `Python service error: ${error.response?.status || 500} ${
-            error.response?.statusText || ""
-          }`
-        );
+        throw new Error(`Python service (pdf2docx) error: ${error.message}`);
       }
 
-      // --------- PDF to TXT (text-only extraction) ---------
+      // --------- PDF to TXT ---------
     } else if (mimetype.includes("pdf") && targetFormat === "txt") {
       let text = "";
       await new Promise<void>((resolve, reject) => {
@@ -119,19 +114,38 @@ export default async function handler(
       });
       outputBuffer = Buffer.from(text.trim(), "utf-8");
 
-      // --------- TXT to DOCX/PDF and DOCX to PDF/TXT via LibreOffice ---------
+      // --------- GENERIC: DOCX -> PDF via Python Microservice ---------
     } else if (
       (mimetype.includes("text/plain") &&
         ["docx", "pdf"].includes(targetFormat)) ||
       (mimetype.includes("word") &&
         ["pdf", "txt", "docx"].includes(targetFormat)) ||
-      (mimetype.includes("application/pdf") && targetFormat === "pdf")
+      (mimetype.includes("application/pdf") && targetFormat === "pdf") ||
+      mimetype.includes("spreadsheet") ||
+      mimetype.includes("excel")
     ) {
-      const convertedFilePath = await convertWithLibreOffice(
-        file.filepath,
-        targetFormat
+      const formData = createServiceFormData();
+      console.log(
+        `Sending Generic Conversion (${targetFormat}) to Python service`
       );
-      outputBuffer = await fs.promises.readFile(convertedFilePath);
+
+      try {
+        const response = await axios.post(
+          `${PYTHON_SERVICE_URL}/convert/libreoffice/`,
+          formData,
+          {
+            params: { target_format: targetFormat },
+            headers: formData.getHeaders(),
+            responseType: "arraybuffer",
+          }
+        );
+        outputBuffer = Buffer.from(response.data);
+      } catch (error: any) {
+        const msg = error.response?.data
+          ? error.response.data.toString()
+          : error.message;
+        throw new Error(`Python service (libreoffice) error: ${msg}`);
+      }
 
       // --------- TXT to DOCX fallback ---------
     } else if (mimetype.includes("text/plain") && targetFormat === "docx") {
@@ -140,8 +154,6 @@ export default async function handler(
         sections: [{ children: [new Paragraph(text)] }],
       });
       outputBuffer = await Packer.toBuffer(doc);
-
-      // --------- Unsupported conversion ---------
     } else {
       return res
         .status(400)
