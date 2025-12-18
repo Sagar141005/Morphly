@@ -31,25 +31,31 @@ export default function SplitPDFPage() {
       });
 
       if (!res.ok) {
-        if (res.headers.get("Content-Type")?.includes("application/zip")) {
-          const blob = await res.blob();
-          const url = window.URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = "split.zip";
-          a.click();
-          return;
-        }
-
         const data = await res.json();
         toast.error(data.error || "Failed to split PDF");
+        return;
       }
 
-      const data = await res.json();
-      if (data.files) {
-        setResultFiles(data.files);
+      const contentType = res.headers.get("content-type");
+
+      if (contentType && contentType.includes("application/json")) {
+        const data = await res.json();
+        if (data.files) {
+          setResultFiles(data.files);
+        }
+      } else {
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "split.zip";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
       }
     } catch (err: any) {
+      console.error(err);
       toast.error(err.message || "Something went wrong");
     }
   };
