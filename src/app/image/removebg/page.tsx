@@ -32,8 +32,16 @@ export default function RemoveBGPage() {
         toast.error(data.error || "Failed to remove background");
       }
 
-      const data = await res.json();
-      setResultURL(data.url);
+      const contentType = res.headers.get("content-type");
+
+      if (contentType && contentType.includes("application/json")) {
+        const data = await res.json();
+        setResultURL(data.url);
+      } else {
+        const blob = await res.blob();
+        const localUrl = window.URL.createObjectURL(blob);
+        setResultURL(localUrl);
+      }
     } catch (err: any) {
       toast.error(err.message);
     }

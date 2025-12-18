@@ -12,7 +12,7 @@ import toast from "react-hot-toast";
 
 const getFileFormats = () => ["PDF", "DOCX", "TXT"];
 
-export default function MergePDFPage() {
+export default function ConvertPDFPage() {
   const [resultURL, setResultURL] = useState<string | null>(null);
 
   const handleConvert = async (files: UploadFile[]) => {
@@ -36,26 +36,24 @@ export default function MergePDFPage() {
       });
 
       if (!res.ok) {
-        if (
-          res.headers.get("Content-Type")?.includes("application/octet-stream")
-        ) {
-          const blob = await res.blob();
-          const url = window.URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = `converted.${format?.toLowerCase()}`;
-          a.click();
-          return;
-        }
-
         const data = await res.json();
         toast.error(data.error || "Failed to convert file");
+        return;
       }
 
-      const data = await res.json();
-      setResultURL(data.url);
+      const contentType = res.headers.get("content-type");
+
+      if (contentType && contentType.includes("application/json")) {
+        const data = await res.json();
+        setResultURL(data.url);
+      } else {
+        const blob = await res.blob();
+        const localUrl = window.URL.createObjectURL(blob);
+        setResultURL(localUrl);
+      }
     } catch (err: any) {
-      toast.error(err.message || "Conversion failed");
+      console.error(err);
+      toast.error(err.message || "An unexpected error occurred");
     }
   };
 

@@ -31,24 +31,24 @@ export default function MergePDFPage() {
       });
 
       if (!res.ok) {
-        if (res.headers.get("Content-Type")?.includes("application/pdf")) {
-          const blob = await res.blob();
-          const url = window.URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = "merged.pdf";
-          a.click();
-          return;
-        }
-
         const data = await res.json();
         toast.error(data.error || "Failed to merge PDFs");
+        return;
       }
 
-      const data = await res.json();
-      setResultURL(data.url);
+      const contentType = res.headers.get("content-type");
+
+      if (contentType && contentType.includes("application/json")) {
+        const data = await res.json();
+        setResultURL(data.url);
+      } else {
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        setResultURL(url);
+      }
     } catch (err: any) {
-      toast.error(err.message);
+      console.error(err);
+      toast.error(err.message || "An unexpected error occurred");
     }
   };
 

@@ -41,8 +41,16 @@ export default function ImageConversionPage() {
           continue;
         }
 
-        const data = await res.json();
-        output.push(data.url);
+        const contentType = res.headers.get("content-type");
+
+        if (contentType && contentType.includes("application/json")) {
+          const data = await res.json();
+          output.push(data.url);
+        } else {
+          const blob = await res.blob();
+          const localUrl = window.URL.createObjectURL(blob);
+          output.push(localUrl);
+        }
       } catch (err) {
         toast.error("Something went wrong.");
       }
