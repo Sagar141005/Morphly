@@ -13,7 +13,6 @@ export default async function DashboardPage() {
 
   const user = await prisma.user.findUnique({
     where: { email: session.user.email },
-    include: { files: true },
   });
 
   if (!user || (user.plan !== "PRO" && user.plan !== "PLUS")) {
@@ -57,7 +56,7 @@ export default async function DashboardPage() {
   return (
     <div className="min-h-screen flex flex-col bg-white dark:bg-neutral-950 antialiased">
       <Navbar />
-      <DashboardClient initialFiles={files} stats={stats} />
+      <DashboardClient initialFiles={files} stats={stats} serverUser={user} />
       <Footer />
     </div>
   );

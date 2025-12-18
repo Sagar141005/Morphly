@@ -25,6 +25,7 @@ interface FileType {
 export default function DashboardClient({
   initialFiles,
   stats,
+  serverUser,
 }: {
   initialFiles: FileType[];
   stats: {
@@ -33,8 +34,10 @@ export default function DashboardClient({
     growth: number;
     storageUsed: number;
   };
+  serverUser: any;
 }) {
   const user = useUserStore((state) => state.user);
+  const setUser = useUserStore((state) => state.setUser);
 
   const [files, setFiles] = useState<FileType[]>(initialFiles);
   const [cursor, setCursor] = useState<string | null>(
@@ -46,16 +49,28 @@ export default function DashboardClient({
   const [fileToDelete, setFileToDelete] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!user) return;
+    // Sync the store with fresh server data on mount
+    if (serverUser) {
+      setUser(serverUser);
+    }
+  }, [serverUser, setUser]);
+
+  const displayUser = user || serverUser;
+
+  useEffect(() => {
+    if (!displayUser) return;
 
     const deleteOldFiles = async () => {
-      if (!user.plan || user.plan === "FREE") return;
+      if (!displayUser.plan || displayUser.plan === "FREE") return;
 
       try {
         const res = await fetch("/api/files/delete-old", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId: user.id, plan: user.plan }),
+          body: JSON.stringify({
+            userId: displayUser.id,
+            plan: displayUser.plan,
+          }),
         });
         const data = await res.json();
         if (data.deleted > 0) {
@@ -69,7 +84,7 @@ export default function DashboardClient({
     };
 
     deleteOldFiles();
-  }, [user]);
+  }, [displayUser]);
 
   const loadMoreFromDB = async () => {
     if (!cursor) return;
@@ -117,7 +132,7 @@ export default function DashboardClient({
     }
   };
 
-  if (!user) return <Loader />;
+  if (!displayUser) return <Loader />;
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -136,11 +151,6 @@ export default function DashboardClient({
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      <div className="absolute inset-0 z-0 pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-100/50 dark:bg-blue-900/10 rounded-full blur-3xl opacity-60" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-100/50 dark:bg-indigo-900/10 rounded-full blur-3xl opacity-60" />
-      </div>
-
       <main className="relative z-10 flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 pt-24 sm:pt-32 pb-20">
         <motion.div
           variants={containerVariants}
@@ -153,7 +163,7 @@ export default function DashboardClient({
                 <h1 className="text-5xl sm:text-4xl font-extrabold text-neutral-900 dark:text-white tracking-tight mb-2">
                   Welcome back,{" "}
                   <span className="text-transparent bg-clip-text bg-blue-600 dark:bg-blue-400">
-                    {user.name || "Creator"}
+                    {displayUser.name || "Creator"}
                   </span>
                   <span className="ml-2 inline-block animate-wave origin-bottom-right">
                     👋
