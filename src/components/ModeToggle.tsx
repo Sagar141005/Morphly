@@ -13,7 +13,7 @@ const ModeToggle = () => {
 
   return (
     <div
-      className="relative size-8 flex items-center justify-center rounded-full border"
+      className="relative size-8 flex items-center justify-center rounded-full border shadow-sm"
       onClick={toggleTheme}
     >
       <Sun className="absolute size-4 rotate-0 scale-100 dark:scale-0 dark:-rotate-90 transition-all duration-300" />
