@@ -46,13 +46,11 @@ Building a robust file converter requires solving challenges beyond simple UI de
 
 | Layer | Technology |
 | :--- | :--- |
-| **Framework** | Next.js 14 (App Router) |
-| **Language** | TypeScript |
-| **Styling** | Tailwind CSS |
-| **Font** | Manrope (Google Fonts) |
-| **Theme** | next-themes (System/Dark/Light) |
-| **State** | Zustand |
-| **Deployment** | Vercel, Railway |
+| **Frontend** | Next.js 14 (App Router), TypeScript, Tailwind CSS, Zustand |
+| **Backend** | Node.js (Next.js API routes), Python (FastAPI), LibreOffice (headless) |
+| **Database & Auth** | PostgreSQL, Prisma, NextAuth, Supabase |
+| **Infrastructure** | Docker, Vercel, Railway, Cloudinary |
+| **Payments** | Stripe |
 
 
 ## 💡 System Design Decisions
